@@ -1,0 +1,29 @@
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--volha-color-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon {
+  width: 14px;
+  height: 14px;
+  display: grid;
+  flex: 0 0 14px;
+  place-items: center;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 1.6;
+  }
+}

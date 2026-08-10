@@ -1,0 +1,30 @@
+@use '../styles/mixins' as ds;
+
+.shell {
+  position: relative;
+  display: block;
+}
+
+.select {
+  height: 46px;
+  appearance: none;
+  padding: 0 44px 0 14px;
+  cursor: pointer;
+  font-size: 14px;
+  @include ds.field-control;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  color: var(--volha-color-muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.invalid {
+  border-color: var(--volha-color-danger);
+}

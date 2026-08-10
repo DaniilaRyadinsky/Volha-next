@@ -1,0 +1,72 @@
+@use '../styles/mixins' as ds;
+
+.switch {
+  width: fit-content;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+
+  input {
+    @include ds.visually-hidden;
+  }
+
+  input:checked + .track {
+    border-color: var(--volha-color-ink);
+    background: var(--volha-color-ink);
+  }
+
+  input:checked + .track .thumb {
+    transform: translateX(18px);
+  }
+
+  input:focus-visible + .track {
+    @include ds.focus-ring;
+  }
+}
+
+.track {
+  width: 42px;
+  height: 24px;
+  position: relative;
+  display: block;
+  flex: 0 0 42px;
+  border: 1px solid var(--volha-color-border-strong);
+  border-radius: 12px;
+  background: var(--volha-color-soft);
+  @include ds.control-transition;
+}
+
+.thumb {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  border-radius: 50%;
+  background: var(--volha-color-surface);
+  box-shadow: var(--volha-shadow-thumb);
+  transition: transform 160ms ease;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.label {
+  font-size: 13px;
+  line-height: 24px;
+}
+
+.description {
+  max-width: 420px;
+  color: var(--volha-color-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.disabled {
+  @include ds.disabled;
+}

@@ -1,0 +1,14 @@
+@use '../styles/mixins' as ds;
+
+.textarea {
+  min-height: 112px;
+  padding: 12px 14px;
+  resize: vertical;
+  font-size: 14px;
+  line-height: 1.5;
+  @include ds.field-control;
+}
+
+.invalid {
+  border-color: var(--volha-color-danger);
+}

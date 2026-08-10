@@ -1,0 +1,20 @@
+@use '../styles/mixins' as ds;
+
+.input {
+  height: 46px;
+  padding: 0 14px;
+  font-size: 14px;
+  @include ds.field-control;
+}
+
+.withLeading {
+  padding-left: 42px;
+}
+
+.withTrailing {
+  padding-right: 46px;
+}
+
+.invalid {
+  border-color: var(--volha-color-danger);
+}

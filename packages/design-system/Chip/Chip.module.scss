@@ -1,0 +1,73 @@
+@use '../styles/mixins' as ds;
+
+.shell {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--volha-color-border);
+  border-radius: var(--volha-radius-control);
+  color: var(--volha-color-muted);
+  background: var(--volha-color-surface);
+  @include ds.control-transition;
+
+  &:hover {
+    color: var(--volha-color-ink);
+    border-color: var(--volha-color-ink);
+  }
+}
+
+.active {
+  color: var(--volha-color-canvas);
+  border-color: var(--volha-color-ink);
+  background: var(--volha-color-ink);
+}
+
+.action,
+.remove {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+
+  &:focus-visible {
+    @include ds.focus-ring;
+  }
+
+  &:disabled {
+    @include ds.disabled;
+  }
+}
+
+.action {
+  gap: 7px;
+  padding: 0 12px;
+  font-size: 12px;
+}
+
+.remove {
+  width: 30px;
+  justify-content: center;
+  border-left: 1px solid currentColor;
+  opacity: 0.72;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}

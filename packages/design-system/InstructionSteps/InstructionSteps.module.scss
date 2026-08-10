@@ -1,0 +1,43 @@
+.root {
+  min-width: 0;
+  color: var(--volha-color-ink);
+}
+
+.label {
+  margin: 0 0 16px;
+  color: var(--volha-color-muted);
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.number {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  color: var(--volha-color-canvas);
+  background: var(--volha-color-ink);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1;
+  place-items: center;
+}

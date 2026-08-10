@@ -1,0 +1,66 @@
+@use '../styles/mixins' as ds;
+
+.control {
+  width: fit-content;
+  display: inline-grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  padding: 3px;
+  border: 1px solid var(--volha-color-border);
+  border-radius: var(--volha-radius-control);
+  background: var(--volha-color-soft);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: var(--volha-radius-control);
+  color: var(--volha-color-muted);
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  @include ds.control-transition;
+
+  &:hover:not(:disabled) {
+    color: var(--volha-color-ink);
+  }
+
+  &:focus-visible {
+    @include ds.focus-ring;
+  }
+
+  &:disabled {
+    @include ds.disabled;
+  }
+}
+
+.sm .option {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+
+.md .option {
+  min-height: 36px;
+  padding: 0 13px;
+  font-size: 12px;
+}
+
+.active {
+  color: var(--volha-color-ink);
+  background: var(--volha-color-surface);
+  box-shadow: var(--volha-shadow-control);
+}
+
+.icon,
+.icon svg {
+  width: 16px;
+  height: 16px;
+}

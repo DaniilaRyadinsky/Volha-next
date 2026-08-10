@@ -1,0 +1,53 @@
+@use '../styles/mixins' as ds;
+
+.gallery {
+  min-width: 0;
+}
+
+.main,
+.thumbnail {
+  overflow: hidden;
+  background: var(--volha-color-soft);
+
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+}
+
+.main {
+  aspect-ratio: var(--volha-gallery-aspect);
+}
+
+.thumbnails {
+  display: grid;
+  grid-template-columns: repeat(var(--volha-gallery-columns), minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.thumbnail {
+  min-width: 0;
+  aspect-ratio: var(--volha-gallery-aspect);
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 0;
+  cursor: pointer;
+  opacity: 0.72;
+  @include ds.control-transition;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    @include ds.focus-ring;
+  }
+}
+
+.active {
+  border-color: var(--volha-color-ink);
+  opacity: 1;
+}

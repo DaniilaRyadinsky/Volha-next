@@ -1,0 +1,137 @@
+@use '../styles/mixins' as ds;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid transparent;
+  border-radius: var(--volha-radius-control);
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  @include ds.control-transition;
+
+  &:focus-visible {
+    @include ds.focus-ring;
+  }
+
+  &:disabled {
+    @include ds.disabled;
+  }
+}
+
+.sm {
+  min-height: 36px;
+  padding: 0 13px;
+  font-size: 12px;
+}
+
+.md {
+  min-height: 44px;
+  padding: 0 18px;
+  font-size: 14px;
+}
+
+.lg {
+  min-height: 52px;
+  padding: 0 22px;
+  font-size: 15px;
+}
+
+.primary {
+  color: var(--volha-color-canvas);
+  background: var(--volha-color-ink);
+
+  &:hover:not(:disabled) {
+    color: var(--volha-color-surface);
+    background: var(--volha-color-copper);
+  }
+}
+
+.secondary {
+  color: var(--volha-color-ink);
+  border-color: var(--volha-color-border);
+  background: var(--volha-color-surface);
+
+  &:hover:not(:disabled) {
+    border-color: var(--volha-color-ink);
+    background: var(--volha-color-soft);
+  }
+}
+
+.outline {
+  color: var(--volha-color-ink);
+  border-color: var(--volha-color-ink);
+  background: transparent;
+
+  &:hover:not(:disabled) {
+    color: var(--volha-color-canvas);
+    background: var(--volha-color-ink);
+  }
+}
+
+.accent {
+  color: var(--volha-color-surface);
+  background: var(--volha-color-copper);
+
+  &:hover:not(:disabled) {
+    background: var(--volha-color-ink);
+  }
+}
+
+.ghost {
+  color: var(--volha-color-ink);
+  background: transparent;
+
+  &:hover:not(:disabled) {
+    background: var(--volha-color-soft);
+  }
+}
+
+.light {
+  color: var(--volha-color-ink);
+  background: var(--volha-color-surface);
+
+  &:hover:not(:disabled) {
+    color: var(--volha-color-surface);
+    background: var(--volha-color-copper);
+  }
+}
+
+.danger {
+  color: var(--volha-color-surface);
+  background: var(--volha-color-danger);
+
+  &:hover:not(:disabled) {
+    background: var(--volha-color-danger-strong);
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.loading {
+  cursor: progress;
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  flex: 0 0 18px;
+  place-items: center;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.8;
+  }
+}

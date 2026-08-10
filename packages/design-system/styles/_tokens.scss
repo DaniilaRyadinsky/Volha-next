@@ -1,0 +1,33 @@
+$colors: (
+  canvas: #f9f7f3,
+  surface: #ffffff,
+  ink: #1c1b18,
+  soft: #ede9e1,
+  muted: #78746c,
+  copper: #b8793c,
+  hit: #c77a31,
+  difficulty-easy: #00b97d,
+  difficulty-medium: #ff9d00,
+  difficulty-hard: #ff2054,
+  success: #2f7d55,
+  danger: #a7443c,
+  danger-strong: #86342f,
+  warning: #9a641f,
+  info: #356b7d,
+  border: rgba(28, 27, 24, 0.16),
+  border-strong: rgba(28, 27, 24, 0.45),
+  overlay: rgba(28, 27, 24, 0.68),
+  focus: rgba(184, 121, 60, 0.35),
+) !default;
+
+$radii: (
+  control: 2px,
+) !default;
+
+$shadows: (
+  control: 0 1px 3px rgba(28, 27, 24, 0.12),
+  thumb: 0 1px 3px rgba(28, 27, 24, 0.22),
+  modal: 0 24px 70px rgba(28, 27, 24, 0.3),
+) !default;
+
+$font-family-sans: Inter, Arial, Helvetica, sans-serif !default;

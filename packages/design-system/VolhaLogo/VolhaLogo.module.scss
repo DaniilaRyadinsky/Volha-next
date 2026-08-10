@@ -1,0 +1,26 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--volha-color-ink);
+  line-height: 1;
+
+  svg {
+    width: 26px;
+    height: 26px;
+    flex: 0 0 26px;
+  }
+
+  strong {
+    font-size: 17px;
+    font-weight: 750;
+  }
+}
+
+.light {
+  color: var(--volha-color-surface);
+}
+
+.compact {
+  gap: 0;
+}

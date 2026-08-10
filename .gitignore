@@ -1,0 +1,46 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+.pnpm-store/
+
+# build outputs
+.next/
+out/
+build/
+dist/
+dist-ssr/
+.turbo/
+
+# tests and caches
+coverage/
+*.tsbuildinfo
+
+# logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# environment
+.env
+.env.*
+!.env.example
+
+# deployments
+.vercel/
+
+# system and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

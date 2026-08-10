@@ -1,0 +1,91 @@
+@use '../styles/mixins' as ds;
+
+.group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  margin-bottom: 10px;
+  padding: 0;
+  color: var(--volha-color-ink);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.options {
+  display: flex;
+  gap: 14px;
+}
+
+.vertical .options {
+  flex-direction: column;
+}
+
+.horizontal .options {
+  flex-flow: row wrap;
+}
+
+.option {
+  width: fit-content;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+
+  input {
+    @include ds.visually-hidden;
+  }
+
+  input:checked + .control span {
+    transform: scale(1);
+  }
+
+  input:focus-visible + .control {
+    @include ds.focus-ring;
+  }
+}
+
+.control {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  flex: 0 0 20px;
+  place-items: center;
+  border: 1px solid var(--volha-color-border-strong);
+  border-radius: 50%;
+  background: var(--volha-color-surface);
+
+  span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--volha-color-copper);
+    transform: scale(0);
+    transition: transform 150ms ease;
+  }
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.label {
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.description {
+  max-width: 320px;
+  color: var(--volha-color-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.disabled {
+  @include ds.disabled;
+}

@@ -1,0 +1,68 @@
+.field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  width: fit-content;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  color: var(--volha-color-ink);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.required {
+  color: var(--volha-color-danger);
+}
+
+.message {
+  min-height: 16px;
+  color: var(--volha-color-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.error {
+  color: var(--volha-color-danger);
+}
+
+.disabled {
+  opacity: 0.72;
+}
+
+.controlShell {
+  position: relative;
+  display: block;
+}
+
+.leading,
+.trailing {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: var(--volha-color-muted);
+  transform: translateY(-50%);
+}
+
+.leading {
+  left: 14px;
+  pointer-events: none;
+}
+
+.trailing {
+  right: 8px;
+}
+
+.leading,
+.leading svg,
+.trailing svg {
+  width: 18px;
+  height: 18px;
+}

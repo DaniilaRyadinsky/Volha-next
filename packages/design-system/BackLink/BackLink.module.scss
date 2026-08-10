@@ -1,0 +1,36 @@
+@use '../styles/mixins' as ds;
+
+.link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--volha-color-muted);
+  font-size: 12px;
+  line-height: 16px;
+  text-decoration: none;
+  @include ds.control-transition;
+
+  &:hover {
+    color: var(--volha-color-ink);
+  }
+
+  &:focus-visible {
+    border-radius: var(--volha-radius-control);
+    @include ds.focus-ring;
+  }
+}
+
+.icon {
+  width: 14px;
+  height: 14px;
+  display: grid;
+  flex: 0 0 14px;
+  place-items: center;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 1.7;
+  }
+}

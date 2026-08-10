@@ -1,0 +1,18 @@
+@use './tokens';
+
+:root,
+[data-volha-theme='default'] {
+  @each $name, $value in tokens.$colors {
+    --volha-color-#{$name}: #{$value};
+  }
+
+  @each $name, $value in tokens.$radii {
+    --volha-radius-#{$name}: #{$value};
+  }
+
+  @each $name, $value in tokens.$shadows {
+    --volha-shadow-#{$name}: #{$value};
+  }
+
+  --volha-font-family-sans: #{tokens.$font-family-sans};
+}

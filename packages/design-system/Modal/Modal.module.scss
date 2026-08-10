@@ -1,0 +1,148 @@
+.overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  overflow: auto;
+  padding: 24px;
+  background: var(--volha-color-overlay);
+  animation: fade-in 160ms ease both;
+}
+
+.dialog {
+  width: min(100%, 560px);
+  max-height: calc(100dvh - 48px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--volha-color-border);
+  border-radius: var(--volha-radius-control);
+  color: var(--volha-color-ink);
+  background: var(--volha-color-surface);
+  box-shadow: var(--volha-shadow-modal);
+  outline: none;
+  animation: dialog-in 180ms ease both;
+}
+
+.sm {
+  width: min(100%, 420px);
+}
+
+.md {
+  width: min(100%, 560px);
+}
+
+.lg {
+  width: min(100%, 760px);
+}
+
+.full {
+  width: min(100%, 1120px);
+  height: calc(100dvh - 48px);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--volha-color-border);
+}
+
+.heading {
+  min-width: 0;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  p {
+    max-width: 580px;
+    margin: 6px 0 0;
+    color: var(--volha-color-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
+.close {
+  margin: -7px -8px 0 0;
+}
+
+.body {
+  min-height: 0;
+  overflow: auto;
+  padding: 24px;
+}
+
+.footer {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 18px 24px;
+  border-top: 1px solid var(--volha-color-border);
+  background: var(--volha-color-canvas);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .overlay {
+    align-items: end;
+    padding: 0;
+  }
+
+  .dialog,
+  .sm,
+  .md,
+  .lg,
+  .full {
+    width: 100%;
+    max-height: calc(100dvh - 24px);
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+  }
+
+  .full {
+    height: calc(100dvh - 24px);
+  }
+
+  .header,
+  .body,
+  .footer {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .footer > * {
+    flex: 1 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .dialog {
+    animation: none;
+  }
+}
