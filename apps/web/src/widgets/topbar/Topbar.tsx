@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import styles from './Topbar.module.scss'
 import { VolhaLogo } from '@volha/design-system'
 import { ShoppingBag } from 'lucide-react'
-import { Page } from './const'
+import { NAV, Page } from './const'
 
 export const Topbar = ({
   current,
@@ -27,7 +27,17 @@ export const Topbar = ({
   return (
     <div className={styles.patternNav}>
       <VolhaLogo light />
-      <span>Каталог</span><span>DIY и идеи</span><span>О нас</span>
+      <nav>
+        {NAV.map((item) => (
+          <a
+            key={item.page}
+            href={item.page === "home" ? "/" : `/${item.page}`}
+            className={current === item.page ? styles.active : ''}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
       <ShoppingBag />
     </div>
   )
