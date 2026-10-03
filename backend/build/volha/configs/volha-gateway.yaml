@@ -1,0 +1,6 @@
+addr_products: "volha-product-service:8008"
+timeout: 10s
+port: 8080
+mode: "PROD"
+redis_addr: "volha-redis:6379"
+redis_dictionaries_ttl: 10m

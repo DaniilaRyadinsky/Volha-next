@@ -1,0 +1,18 @@
+{
+  "uid": "volha-gateway",
+  "title": "Volha / Gateway",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {"type": "timeseries", "title": "Request Rate by Route", "gridPos": {"x": 0, "y": 0, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_http_requests_total{service=\"volha-gateway\", route!~\"/health/(live|ready)\"}[5m])) by (method, route)"}]},
+    {"type": "timeseries", "title": "Latency by Route p95", "gridPos": {"x": 12, "y": 0, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.95, sum by (le, route) (rate(volha_http_request_duration_seconds_bucket{service=\"volha-gateway\", route!~\"/health/(live|ready)\"}[5m])))"}]},
+    {"type": "timeseries", "title": "Status Codes / 5xx", "gridPos": {"x": 0, "y": 6, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_http_requests_total{service=\"volha-gateway\", route!~\"/health/(live|ready)\"}[5m])) by (status)"}]},
+    {"type": "timeseries", "title": "In-flight", "gridPos": {"x": 8, "y": 6, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "volha_http_inflight_requests{service=\"volha-gateway\"}"}]},
+    {"type": "timeseries", "title": "Downstream gRPC Latency", "gridPos": {"x": 16, "y": 6, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.95, sum by (le, grpc_method) (rate(volha_grpc_client_request_duration_seconds_bucket{service=\"volha-gateway\"}[5m])))"}]},
+    {"type": "timeseries", "title": "Downstream gRPC Errors", "gridPos": {"x": 0, "y": 12, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_grpc_client_requests_total{service=\"volha-gateway\", grpc_code!=\"OK\"}[5m])) by (grpc_method, grpc_code)"}]},
+    {"type": "timeseries", "title": "Cache hits/misses/errors", "gridPos": {"x": 12, "y": 12, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_redis_cache_operations_total{service=\"volha-gateway\"}[5m])) by (cache, operation, result)"}]},
+    {"type": "table", "title": "Top Slow Normalized Routes", "gridPos": {"x": 0, "y": 18, "w": 24, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "topk(10, histogram_quantile(0.95, sum by (le, route) (rate(volha_http_request_duration_seconds_bucket{service=\"volha-gateway\", route!~\"/health/(live|ready)\"}[5m]))))", "format": "table"}]}
+  ]
+}

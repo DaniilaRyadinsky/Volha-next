@@ -1,0 +1,2649 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "title": "Volha gateway REST API",
+        "contact": {
+            "name": "Alex \"bustard\" Provor",
+            "url": "https://breezy.su",
+            "email": "help@breezy.su"
+        },
+        "version": "0.1"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/api/article": {
+            "get": {
+                "description": "Возвращает статью по id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "blog"
+                ],
+                "summary": "Получить статью",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID статью",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Article"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет информацию о статье по ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "blog"
+                ],
+                "summary": "Обновить статью",
+                "parameters": [
+                    {
+                        "description": "Данные статьи",
+                        "name": "article",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Article"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет новую статью. Id и CreationTime создаются автоматически. Можно передавать значения по умолчанию",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "blog"
+                ],
+                "summary": "Создать новую статью",
+                "parameters": [
+                    {
+                        "description": "Данные новой статьи",
+                        "name": "article",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Article"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет статью по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "blog"
+                ],
+                "summary": "Удалить статью",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID статью",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/article/all": {
+            "get": {
+                "description": "Возвращает список статей",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "blog"
+                ],
+                "summary": "Получить все статьи",
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.Article"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/brand": {
+            "get": {
+                "description": "Возвращает бренд по id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "brands"
+                ],
+                "summary": "Получить бренд",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID бренда",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Brand"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет информацию о бренде по ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "brands"
+                ],
+                "summary": "Обновить бренд",
+                "parameters": [
+                    {
+                        "description": "Данные бренда",
+                        "name": "brand",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Brand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет новый бренд",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "brands"
+                ],
+                "summary": "Создать новый бренд",
+                "parameters": [
+                    {
+                        "description": "Данные нового бренда",
+                        "name": "brand",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Brand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет бренд по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "brands"
+                ],
+                "summary": "Удалить бренд",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID бренда",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/brand/all": {
+            "get": {
+                "description": "Возвращает список брендов",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "brands"
+                ],
+                "summary": "Получить все бренды",
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.Brand"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/category": {
+            "get": {
+                "description": "Возвращает категорию по id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Получить категорию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID категории",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Category"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет информацию о категории",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Обновить категорию",
+                "parameters": [
+                    {
+                        "description": "Обновлённая категория",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Category"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет новую категорию",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Создать категорию",
+                "parameters": [
+                    {
+                        "description": "Новая категория",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Category"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет категорию по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Удалить категорию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID категории",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/category/all": {
+            "get": {
+                "description": "Возвращает список всех категорий",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "Получить все категории",
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.Category"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/color": {
+            "get": {
+                "description": "Возвращает цвет по id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "color"
+                ],
+                "summary": "Получить цвет",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID цвета",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Color"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет данные существующего цвета",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "color"
+                ],
+                "summary": "Обновить цвет",
+                "parameters": [
+                    {
+                        "description": "Обновлённый цвет",
+                        "name": "color",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Color"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет новый цвет",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "color"
+                ],
+                "summary": "Создать цвет",
+                "parameters": [
+                    {
+                        "description": "Новый цвет",
+                        "name": "color",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Color"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет цвет по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "color"
+                ],
+                "summary": "Удалить цвет",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID цвета",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/color/all": {
+            "get": {
+                "description": "Возвращает список всех доступных цветов",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "color"
+                ],
+                "summary": "Получить все цвета",
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.Color"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/colorphotos": {
+            "put": {
+                "description": "Обновляет массив фотографий для конкретного продукта и цвета",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product_color_photos"
+                ],
+                "summary": "Обновить фотографии продукта для цвета",
+                "parameters": [
+                    {
+                        "description": "Измененный набор фотографий",
+                        "name": "photos",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.ProductColorPhotos"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет массив фотографий для конкретного продукта и цвета",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product_color_photos"
+                ],
+                "summary": "Создать фотографии продукта для цвета",
+                "parameters": [
+                    {
+                        "description": "Новый набор фотографий",
+                        "name": "photos",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.ProductColorPhotos"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет записи фотографий продукта для указанного цвета",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product_color_photos"
+                ],
+                "summary": "Удалить фотографии продукта для цвета",
+                "parameters": [
+                    {
+                        "description": "ID продукта и цвета",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.ProductColorPhotosId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/colorphotos/all": {
+            "get": {
+                "description": "Возвращает все записи product_color_photos",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product_color_photos"
+                ],
+                "summary": "Получить все фотографии продуктов по цветам",
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.ProductColorPhotos"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/colorphotos/photos/get": {
+            "post": {
+                "description": "Возвращает массив фотографий для указанного продукта и цвета",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product_color_photos"
+                ],
+                "summary": "Получить фотографии продукта по ID продукта и цвета",
+                "parameters": [
+                    {
+                        "description": "ID продукта и цвета",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.ProductColorPhotosId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список фотографий",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные данные",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Ошибка взаимодействия с сервисом",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Сервис недоступен",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/country": {
+            "get": {
+                "description": "Возвращает страну по id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "country"
+                ],
+                "summary": "Получить страну",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID страны",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Country"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет данные существующей страны",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "country"
+                ],
+                "summary": "Обновить страну",
+                "parameters": [
+                    {
+                        "description": "Обновлённая страна",
+                        "name": "country",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Country"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет новую страну",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "country"
+                ],
+                "summary": "Создать страну",
+                "parameters": [
+                    {
+                        "description": "Новая страна",
+                        "name": "country",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Country"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет страну по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "country"
+                ],
+                "summary": "Удалить страну",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID страны",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/country/all": {
+            "get": {
+                "description": "Возвращает список всех стран",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "country"
+                ],
+                "summary": "Получить все страны",
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.Country"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/dictionaries/all": {
+            "get": {
+                "description": "Возвращает список всех доступных справочных данных: бренды, категории, материалы, страны и цвета",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dictionaries"
+                ],
+                "summary": "Получить все справочники",
+                "responses": {
+                    "200": {
+                        "description": "Успешный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Dictionaries"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка на сервере",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Ошибка взаимодействия с сервисом",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/dictionaries/all/by-category": {
+            "get": {
+                "description": "Возвращает список всех доступных справочных данных: бренды, материалы, страны и цвета и размеры по определенной категории",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dictionaries"
+                ],
+                "summary": "Получить все справочники по категории",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID категории",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/model.DictionariesByCategory"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка на сервере",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Ошибка взаимодействия с сервисом",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/files": {
+            "post": {
+                "description": "Сохраняет изображение в папке сервера images/. В поле \"img\" передается файл с расширениями jpg, png, webp, gif",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Загрузить изображение",
+                "responses": {
+                    "200": {
+                        "description": "Цвет успешно создан",
+                        "schema": {
+                            "$ref": "#/definitions/view.FileUploadResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат данных",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "413": {
+                        "description": "Файл слишком большой",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "415": {
+                        "description": "Неподдерживаемый тип файла",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка на сервере",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет файл. Требуется передовать только имя. Пример: example.gif",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Удалить файл",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "название файла",
+                        "name": "title",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "файл успешно удалён",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверное название",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка на сервере",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/material": {
+            "get": {
+                "description": "Возвращает материал по id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "material"
+                ],
+                "summary": "Получить материал",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID материал",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Material"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет данные существующего материала",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "material"
+                ],
+                "summary": "Обновить материал",
+                "parameters": [
+                    {
+                        "description": "Обновлённые данные материала",
+                        "name": "material",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Material"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет новый материал",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "material"
+                ],
+                "summary": "Создать материал",
+                "parameters": [
+                    {
+                        "description": "Новый материал",
+                        "name": "material",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Material"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет материал по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "material"
+                ],
+                "summary": "Удалить материал",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID материала",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/material/all": {
+            "get": {
+                "description": "Возвращает список всех материалов",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "material"
+                ],
+                "summary": "Получить все материалы",
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.Material"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/product": {
+            "get": {
+                "description": "Возвращает продукт по id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Получить продукт",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID продукт",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Product"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет данные существующего продукта",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Обновить продукт",
+                "parameters": [
+                    {
+                        "description": "Обновлённые данные продукта",
+                        "name": "product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.ProductId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет новый продукт",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Создать продукт",
+                "parameters": [
+                    {
+                        "description": "Новый продукт",
+                        "name": "product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.ProductId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет продукт по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Удалить продукт",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID продукта",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/product/all": {
+            "get": {
+                "description": "Возвращает список всех продуктов",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Получить все продукты",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "offset \u003e= 0",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit \u003e 0",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.Product"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Ошибка взаимодействия с сервисом",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/product/filter": {
+            "post": {
+                "description": "Возвращает список продуктов, соответствующих заданным критериям фильтрации",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Получить продукты по фильтру",
+                "parameters": [
+                    {
+                        "description": "Параметры фильтрации",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.ProductFilter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный запрос",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.Product"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "Ошибка взаимодействия с сервисом",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/slide": {
+            "get": {
+                "description": "Возвращает слайд по id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "slide"
+                ],
+                "summary": "Получить слайд",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID слайд",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Slide"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет данные существующего слайда",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "slide"
+                ],
+                "summary": "Обновить слайд",
+                "parameters": [
+                    {
+                        "description": "Обновлённые данные слайда",
+                        "name": "material",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Slide"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавляет новый слайд",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "slide"
+                ],
+                "summary": "Создать слайд",
+                "parameters": [
+                    {
+                        "description": "Новый слайд",
+                        "name": "material",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Slide"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет слайд по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "slide"
+                ],
+                "summary": "Удалить слайд",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID слайда",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "неправильный ввод",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "не найдено",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/slide/all": {
+            "get": {
+                "description": "Возвращает список всех слайдов",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "slide"
+                ],
+                "summary": "Получить все слайды",
+                "responses": {
+                    "200": {
+                        "description": "успех",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productsRPC.Slide"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.DictionariesByCategory": {
+            "type": "object",
+            "properties": {
+                "brands": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Brand"
+                    }
+                },
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Category"
+                    }
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Color"
+                    }
+                },
+                "countries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Country"
+                    }
+                },
+                "filtered_category": {
+                    "type": "string"
+                },
+                "materials": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Material"
+                    }
+                },
+                "max_depth": {
+                    "type": "integer"
+                },
+                "max_height": {
+                    "type": "integer"
+                },
+                "max_price": {
+                    "type": "integer"
+                },
+                "max_width": {
+                    "type": "integer"
+                },
+                "min_depth": {
+                    "type": "integer"
+                },
+                "min_height": {
+                    "type": "integer"
+                },
+                "min_price": {
+                    "type": "integer"
+                },
+                "min_width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "productsRPC.Article": {
+            "type": "object",
+            "properties": {
+                "creationTime": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.Brand": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.Category": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "uri": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.Color": {
+            "type": "object",
+            "properties": {
+                "hex": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.Country": {
+            "type": "object",
+            "properties": {
+                "friendly": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.Dictionaries": {
+            "type": "object",
+            "properties": {
+                "brands": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Brand"
+                    }
+                },
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Category"
+                    }
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Color"
+                    }
+                },
+                "countries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Country"
+                    }
+                },
+                "materials": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Material"
+                    }
+                },
+                "max_depth": {
+                    "type": "integer"
+                },
+                "max_height": {
+                    "type": "integer"
+                },
+                "max_price": {
+                    "type": "integer"
+                },
+                "max_width": {
+                    "type": "integer"
+                },
+                "min_depth": {
+                    "type": "integer"
+                },
+                "min_height": {
+                    "type": "integer"
+                },
+                "min_price": {
+                    "type": "integer"
+                },
+                "min_width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "productsRPC.Material": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.Product": {
+            "type": "object",
+            "properties": {
+                "article": {
+                    "type": "string"
+                },
+                "brand": {
+                    "$ref": "#/definitions/productsRPC.Brand"
+                },
+                "category": {
+                    "$ref": "#/definitions/productsRPC.Category"
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Color"
+                    }
+                },
+                "country": {
+                    "$ref": "#/definitions/productsRPC.Country"
+                },
+                "depth": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "materials": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Material"
+                    }
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "seems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.Product"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "productsRPC.ProductColorPhotos": {
+            "type": "object",
+            "properties": {
+                "color_id": {
+                    "type": "string"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "product_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.ProductColorPhotosId": {
+            "type": "object",
+            "properties": {
+                "color_id": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.ProductFilter": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "category": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "country": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "materials": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "max_depth": {
+                    "type": "integer"
+                },
+                "max_height": {
+                    "type": "integer"
+                },
+                "max_price": {
+                    "type": "integer"
+                },
+                "max_width": {
+                    "type": "integer"
+                },
+                "min_depth": {
+                    "type": "integer"
+                },
+                "min_height": {
+                    "type": "integer"
+                },
+                "min_price": {
+                    "type": "integer"
+                },
+                "min_width": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "sort_by": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.ProductId": {
+            "type": "object",
+            "properties": {
+                "article": {
+                    "type": "string"
+                },
+                "brand": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "country": {
+                    "type": "string"
+                },
+                "depth": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "materials": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "seems": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "productsRPC.Slide": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "img": {
+                    "type": "string"
+                },
+                "img762": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                }
+            }
+        },
+        "view.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "error"
+                }
+            }
+        },
+        "view.FileUploadResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "example.jpg"
+                }
+            }
+        },
+        "view.IDResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "asidofadsklhf"
+                }
+            }
+        },
+        "view.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "some info"
+                }
+            }
+        }
+    }
+}

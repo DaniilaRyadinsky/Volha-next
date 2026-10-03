@@ -1,0 +1,1752 @@
+basePath: /
+definitions:
+  model.DictionariesByCategory:
+    properties:
+      brands:
+        items:
+          $ref: '#/definitions/productsRPC.Brand'
+        type: array
+      categories:
+        items:
+          $ref: '#/definitions/productsRPC.Category'
+        type: array
+      colors:
+        items:
+          $ref: '#/definitions/productsRPC.Color'
+        type: array
+      countries:
+        items:
+          $ref: '#/definitions/productsRPC.Country'
+        type: array
+      filtered_category:
+        type: string
+      materials:
+        items:
+          $ref: '#/definitions/productsRPC.Material'
+        type: array
+      max_depth:
+        type: integer
+      max_height:
+        type: integer
+      max_price:
+        type: integer
+      max_width:
+        type: integer
+      min_depth:
+        type: integer
+      min_height:
+        type: integer
+      min_price:
+        type: integer
+      min_width:
+        type: integer
+    type: object
+  productsRPC.Article:
+    properties:
+      creationTime:
+        type: integer
+      id:
+        type: string
+      img:
+        type: string
+      text:
+        type: string
+      title:
+        type: string
+    type: object
+  productsRPC.Brand:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  productsRPC.Category:
+    properties:
+      id:
+        type: string
+      img:
+        type: string
+      title:
+        type: string
+      uri:
+        type: string
+    type: object
+  productsRPC.Color:
+    properties:
+      hex:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  productsRPC.Country:
+    properties:
+      friendly:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  productsRPC.Dictionaries:
+    properties:
+      brands:
+        items:
+          $ref: '#/definitions/productsRPC.Brand'
+        type: array
+      categories:
+        items:
+          $ref: '#/definitions/productsRPC.Category'
+        type: array
+      colors:
+        items:
+          $ref: '#/definitions/productsRPC.Color'
+        type: array
+      countries:
+        items:
+          $ref: '#/definitions/productsRPC.Country'
+        type: array
+      materials:
+        items:
+          $ref: '#/definitions/productsRPC.Material'
+        type: array
+      max_depth:
+        type: integer
+      max_height:
+        type: integer
+      max_price:
+        type: integer
+      max_width:
+        type: integer
+      min_depth:
+        type: integer
+      min_height:
+        type: integer
+      min_price:
+        type: integer
+      min_width:
+        type: integer
+    type: object
+  productsRPC.Material:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  productsRPC.Product:
+    properties:
+      article:
+        type: string
+      brand:
+        $ref: '#/definitions/productsRPC.Brand'
+      category:
+        $ref: '#/definitions/productsRPC.Category'
+      colors:
+        items:
+          $ref: '#/definitions/productsRPC.Color'
+        type: array
+      country:
+        $ref: '#/definitions/productsRPC.Country'
+      depth:
+        type: integer
+      description:
+        type: string
+      height:
+        type: integer
+      id:
+        type: string
+      materials:
+        items:
+          $ref: '#/definitions/productsRPC.Material'
+        type: array
+      photos:
+        items:
+          type: string
+        type: array
+      price:
+        type: integer
+      seems:
+        items:
+          $ref: '#/definitions/productsRPC.Product'
+        type: array
+      title:
+        type: string
+      width:
+        type: integer
+    type: object
+  productsRPC.ProductColorPhotos:
+    properties:
+      color_id:
+        type: string
+      photos:
+        items:
+          type: string
+        type: array
+      product_id:
+        type: string
+    type: object
+  productsRPC.ProductColorPhotosId:
+    properties:
+      color_id:
+        type: string
+      product_id:
+        type: string
+    type: object
+  productsRPC.ProductFilter:
+    properties:
+      brand:
+        items:
+          type: string
+        type: array
+      category:
+        items:
+          type: string
+        type: array
+      colors:
+        items:
+          type: string
+        type: array
+      country:
+        items:
+          type: string
+        type: array
+      limit:
+        type: integer
+      materials:
+        items:
+          type: string
+        type: array
+      max_depth:
+        type: integer
+      max_height:
+        type: integer
+      max_price:
+        type: integer
+      max_width:
+        type: integer
+      min_depth:
+        type: integer
+      min_height:
+        type: integer
+      min_price:
+        type: integer
+      min_width:
+        type: integer
+      offset:
+        type: integer
+      sort_by:
+        type: string
+      sort_order:
+        type: string
+      title:
+        type: string
+    type: object
+  productsRPC.ProductId:
+    properties:
+      article:
+        type: string
+      brand:
+        type: string
+      category:
+        type: string
+      colors:
+        items:
+          type: string
+        type: array
+      country:
+        type: string
+      depth:
+        type: integer
+      description:
+        type: string
+      height:
+        type: integer
+      id:
+        type: string
+      materials:
+        items:
+          type: string
+        type: array
+      photos:
+        items:
+          type: string
+        type: array
+      price:
+        type: integer
+      seems:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      width:
+        type: integer
+    type: object
+  productsRPC.Slide:
+    properties:
+      id:
+        type: string
+      img:
+        type: string
+      img762:
+        type: string
+      link:
+        type: string
+    type: object
+  view.ErrorResponse:
+    properties:
+      error:
+        example: error
+        type: string
+    type: object
+  view.FileUploadResponse:
+    properties:
+      name:
+        example: example.jpg
+        type: string
+    type: object
+  view.IDResponse:
+    properties:
+      id:
+        example: asidofadsklhf
+        type: string
+    type: object
+  view.MessageResponse:
+    properties:
+      message:
+        example: some info
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: help@breezy.su
+    name: Alex "bustard" Provor
+    url: https://breezy.su
+  title: Volha gateway REST API
+  version: "0.1"
+paths:
+  /api/article:
+    delete:
+      description: Удаляет статью по ID
+      parameters:
+      - description: ID статью
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить статью
+      tags:
+      - blog
+    get:
+      description: Возвращает статью по id
+      parameters:
+      - description: ID статью
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/productsRPC.Article'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить статью
+      tags:
+      - blog
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новую статью. Id и CreationTime создаются автоматически.
+        Можно передавать значения по умолчанию
+      parameters:
+      - description: Данные новой статьи
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Article'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.IDResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: уже существует
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать новую статью
+      tags:
+      - blog
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о статье по ID
+      parameters:
+      - description: Данные статьи
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Article'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить статью
+      tags:
+      - blog
+  /api/article/all:
+    get:
+      description: Возвращает список статей
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.Article'
+            type: array
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все статьи
+      tags:
+      - blog
+  /api/brand:
+    delete:
+      description: Удаляет бренд по ID
+      parameters:
+      - description: ID бренда
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить бренд
+      tags:
+      - brands
+    get:
+      description: Возвращает бренд по id
+      parameters:
+      - description: ID бренда
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/productsRPC.Brand'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить бренд
+      tags:
+      - brands
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новый бренд
+      parameters:
+      - description: Данные нового бренда
+        in: body
+        name: brand
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Brand'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.IDResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: уже существует
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать новый бренд
+      tags:
+      - brands
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о бренде по ID
+      parameters:
+      - description: Данные бренда
+        in: body
+        name: brand
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Brand'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить бренд
+      tags:
+      - brands
+  /api/brand/all:
+    get:
+      description: Возвращает список брендов
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.Brand'
+            type: array
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все бренды
+      tags:
+      - brands
+  /api/category:
+    delete:
+      description: Удаляет категорию по ID
+      parameters:
+      - description: ID категории
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить категорию
+      tags:
+      - category
+    get:
+      description: Возвращает категорию по id
+      parameters:
+      - description: ID категории
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/productsRPC.Category'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить категорию
+      tags:
+      - category
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новую категорию
+      parameters:
+      - description: Новая категория
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.IDResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: уже существует
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать категорию
+      tags:
+      - category
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о категории
+      parameters:
+      - description: Обновлённая категория
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить категорию
+      tags:
+      - category
+  /api/category/all:
+    get:
+      description: Возвращает список всех категорий
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.Category'
+            type: array
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все категории
+      tags:
+      - category
+  /api/color:
+    delete:
+      description: Удаляет цвет по ID
+      parameters:
+      - description: ID цвета
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить цвет
+      tags:
+      - color
+    get:
+      description: Возвращает цвет по id
+      parameters:
+      - description: ID цвета
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/productsRPC.Color'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить цвет
+      tags:
+      - color
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новый цвет
+      parameters:
+      - description: Новый цвет
+        in: body
+        name: color
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Color'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.IDResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: уже существует
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать цвет
+      tags:
+      - color
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные существующего цвета
+      parameters:
+      - description: Обновлённый цвет
+        in: body
+        name: color
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Color'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить цвет
+      tags:
+      - color
+  /api/color/all:
+    get:
+      description: Возвращает список всех доступных цветов
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.Color'
+            type: array
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все цвета
+      tags:
+      - color
+  /api/colorphotos:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет записи фотографий продукта для указанного цвета
+      parameters:
+      - description: ID продукта и цвета
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.ProductColorPhotosId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить фотографии продукта для цвета
+      tags:
+      - product_color_photos
+    post:
+      consumes:
+      - application/json
+      description: Добавляет массив фотографий для конкретного продукта и цвета
+      parameters:
+      - description: Новый набор фотографий
+        in: body
+        name: photos
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.ProductColorPhotos'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: уже существует
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать фотографии продукта для цвета
+      tags:
+      - product_color_photos
+    put:
+      consumes:
+      - application/json
+      description: Обновляет массив фотографий для конкретного продукта и цвета
+      parameters:
+      - description: Измененный набор фотографий
+        in: body
+        name: photos
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.ProductColorPhotos'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить фотографии продукта для цвета
+      tags:
+      - product_color_photos
+  /api/colorphotos/all:
+    get:
+      description: Возвращает все записи product_color_photos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.ProductColorPhotos'
+            type: array
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все фотографии продуктов по цветам
+      tags:
+      - product_color_photos
+  /api/colorphotos/photos/get:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает массив фотографий для указанного продукта и цвета
+      parameters:
+      - description: ID продукта и цвета
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.ProductColorPhotosId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список фотографий
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Неверные данные
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: Не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: Ошибка взаимодействия с сервисом
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "503":
+          description: Сервис недоступен
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить фотографии продукта по ID продукта и цвета
+      tags:
+      - product_color_photos
+  /api/country:
+    delete:
+      description: Удаляет страну по ID
+      parameters:
+      - description: ID страны
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить страну
+      tags:
+      - country
+    get:
+      description: Возвращает страну по id
+      parameters:
+      - description: ID страны
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/productsRPC.Country'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить страну
+      tags:
+      - country
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новую страну
+      parameters:
+      - description: Новая страна
+        in: body
+        name: country
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Country'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.IDResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: уже существует
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать страну
+      tags:
+      - country
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные существующей страны
+      parameters:
+      - description: Обновлённая страна
+        in: body
+        name: country
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Country'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить страну
+      tags:
+      - country
+  /api/country/all:
+    get:
+      description: Возвращает список всех стран
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.Country'
+            type: array
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все страны
+      tags:
+      - country
+  /api/dictionaries/all:
+    get:
+      description: 'Возвращает список всех доступных справочных данных: бренды, категории,
+        материалы, страны и цвета'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный запрос
+          schema:
+            $ref: '#/definitions/productsRPC.Dictionaries'
+        "400":
+          description: Ошибка на сервере
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: Ошибка взаимодействия с сервисом
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все справочники
+      tags:
+      - dictionaries
+  /api/dictionaries/all/by-category:
+    get:
+      description: 'Возвращает список всех доступных справочных данных: бренды, материалы,
+        страны и цвета и размеры по определенной категории'
+      parameters:
+      - description: ID категории
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный запрос
+          schema:
+            $ref: '#/definitions/model.DictionariesByCategory'
+        "400":
+          description: Ошибка на сервере
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: Ошибка взаимодействия с сервисом
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все справочники по категории
+      tags:
+      - dictionaries
+  /api/files:
+    delete:
+      description: 'Удаляет файл. Требуется передовать только имя. Пример: example.gif'
+      parameters:
+      - description: название файла
+        in: query
+        name: title
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: файл успешно удалён
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: Неверное название
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "500":
+          description: Ошибка на сервере
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить файл
+      tags:
+      - files
+    post:
+      description: Сохраняет изображение в папке сервера images/. В поле "img" передается
+        файл с расширениями jpg, png, webp, gif
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Цвет успешно создан
+          schema:
+            $ref: '#/definitions/view.FileUploadResponse'
+        "400":
+          description: Неверный формат данных
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "413":
+          description: Файл слишком большой
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "415":
+          description: Неподдерживаемый тип файла
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "500":
+          description: Ошибка на сервере
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Загрузить изображение
+      tags:
+      - files
+  /api/material:
+    delete:
+      description: Удаляет материал по ID
+      parameters:
+      - description: ID материала
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить материал
+      tags:
+      - material
+    get:
+      description: Возвращает материал по id
+      parameters:
+      - description: ID материал
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/productsRPC.Material'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить материал
+      tags:
+      - material
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новый материал
+      parameters:
+      - description: Новый материал
+        in: body
+        name: material
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Material'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.IDResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: уже существует
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать материал
+      tags:
+      - material
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные существующего материала
+      parameters:
+      - description: Обновлённые данные материала
+        in: body
+        name: material
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Material'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить материал
+      tags:
+      - material
+  /api/material/all:
+    get:
+      description: Возвращает список всех материалов
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.Material'
+            type: array
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все материалы
+      tags:
+      - material
+  /api/product:
+    delete:
+      description: Удаляет продукт по ID
+      parameters:
+      - description: ID продукта
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить продукт
+      tags:
+      - product
+    get:
+      description: Возвращает продукт по id
+      parameters:
+      - description: ID продукт
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/productsRPC.Product'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить продукт
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новый продукт
+      parameters:
+      - description: Новый продукт
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.ProductId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.IDResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: уже существует
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать продукт
+      tags:
+      - product
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные существующего продукта
+      parameters:
+      - description: Обновлённые данные продукта
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.ProductId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить продукт
+      tags:
+      - product
+  /api/product/all:
+    get:
+      description: Возвращает список всех продуктов
+      parameters:
+      - description: offset >= 0
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit > 0
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.Product'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: Ошибка взаимодействия с сервисом
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все продукты
+      tags:
+      - product
+  /api/product/filter:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает список продуктов, соответствующих заданным критериям
+        фильтрации
+      parameters:
+      - description: Параметры фильтрации
+        in: body
+        name: filter
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.ProductFilter'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный запрос
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.Product'
+            type: array
+        "400":
+          description: Неверный формат запроса
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: Ошибка взаимодействия с сервисом
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить продукты по фильтру
+      tags:
+      - product
+  /api/slide:
+    delete:
+      description: Удаляет слайд по ID
+      parameters:
+      - description: ID слайда
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить слайд
+      tags:
+      - slide
+    get:
+      description: Возвращает слайд по id
+      parameters:
+      - description: ID слайд
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/productsRPC.Slide'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить слайд
+      tags:
+      - slide
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новый слайд
+      parameters:
+      - description: Новый слайд
+        in: body
+        name: material
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Slide'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.IDResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: уже существует
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать слайд
+      tags:
+      - slide
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные существующего слайда
+      parameters:
+      - description: Обновлённые данные слайда
+        in: body
+        name: material
+        required: true
+        schema:
+          $ref: '#/definitions/productsRPC.Slide'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: неправильный ввод
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "404":
+          description: не найдено
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить слайд
+      tags:
+      - slide
+  /api/slide/all:
+    get:
+      description: Возвращает список всех слайдов
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: успех
+          schema:
+            items:
+              $ref: '#/definitions/productsRPC.Slide'
+            type: array
+        "502":
+          description: ошибка в микросервисе
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить все слайды
+      tags:
+      - slide
+schemes:
+- http
+swagger: "2.0"

@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: Volha
+    orgId: 1
+    folder: Volha
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

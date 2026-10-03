@@ -1,0 +1,96 @@
+logging {
+	level  = "info"
+	format = "logfmt"
+}
+
+discovery.docker "containers" {
+	host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "volha_apps" {
+	targets = discovery.docker.containers.targets
+
+	rule {
+		source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+		regex         = "volha-gateway|volha-product-service|volha-dumper"
+		action        = "keep"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+		target_label  = "service"
+	}
+}
+
+discovery.relabel "volha_infra" {
+	targets = discovery.docker.containers.targets
+
+	rule {
+		source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+		regex         = "volha-redis|volha-productsdb|prometheus|grafana|loki|tempo|alertmanager|alloy|postgres-exporter|redis-exporter|cadvisor|blackbox-exporter|node-exporter"
+		action        = "keep"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+		target_label  = "service"
+	}
+}
+
+loki.write "default" {
+	endpoint {
+		url = "http://loki:3100/loki/api/v1/push"
+	}
+}
+
+loki.process "volha_apps" {
+	stage.json {
+		expressions = {
+			service     = "service",
+			environment = "environment",
+			level       = "level",
+		}
+	}
+
+	stage.labels {
+		values = {
+			service     = "",
+			environment = "",
+			level       = "",
+		}
+	}
+
+	forward_to = [loki.write.default.receiver]
+}
+
+loki.source.docker "volha_apps" {
+	host       = "unix:///var/run/docker.sock"
+	targets    = discovery.relabel.volha_apps.output
+	forward_to = [loki.process.volha_apps.receiver]
+}
+
+loki.source.docker "volha_infra" {
+	host       = "unix:///var/run/docker.sock"
+	targets    = discovery.relabel.volha_infra.output
+	forward_to = [loki.write.default.receiver]
+}
+
+otelcol.receiver.otlp "default" {
+	grpc {
+		endpoint = "0.0.0.0:4317"
+	}
+
+	output {
+		traces = [otelcol.exporter.otlp.tempo.input]
+	}
+}
+
+otelcol.exporter.otlp "tempo" {
+	client {
+		endpoint = "tempo:4317"
+
+		tls {
+			insecure = true
+		}
+	}
+}

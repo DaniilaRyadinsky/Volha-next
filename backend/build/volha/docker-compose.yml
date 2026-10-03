@@ -1,0 +1,188 @@
+services:
+  volha-gateway:
+    image: volha-gateway:${VERSION:-dev}
+    build:
+      context: ../..
+      dockerfile: build/docker/gateway/Dockerfile
+      args:
+        VERSION: ${VERSION:-dev}
+        COMMIT: ${COMMIT:-unknown}
+        BUILD_TIME: ${BUILD_TIME:-unknown}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs:/app/configs:ro
+      - volha-images:/app/images
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      CONFIG_PATH: /app/configs/volha-gateway.yaml
+      APP_ENV: ${APP_ENV:-local}
+      DEV_ADMIN_TOKEN: ${DEV_ADMIN_TOKEN:-change-me}  
+      REDIS_ADDR: volha-redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-change-me}
+      PRODUCT_GRPC_ADDR: volha-product-service:8008
+      LOG_FORMAT: ${LOG_FORMAT:-json}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      METRICS_ENABLED: ${METRICS_ENABLED:-true}
+      METRICS_ADDR: ":9091"
+      PPROF_ENABLED: ${PPROF_ENABLED:-false}
+      OTEL_ENABLED: ${OTEL_ENABLED:-false}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      OTEL_TRACES_SAMPLER_RATIO: ${OTEL_TRACES_SAMPLER_RATIO:-0.1}
+      SLOW_REQUEST_THRESHOLD: ${SLOW_REQUEST_THRESHOLD:-1s}
+    expose:
+      - "9091"
+    depends_on:
+      volha-product-service:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - volha-internal
+
+  volha-product-service:
+    image: volha-product-service:${VERSION:-dev}
+    build:
+      context: ../..
+      dockerfile: build/docker/product-service/Dockerfile
+      args:
+        VERSION: ${VERSION:-dev}
+        COMMIT: ${COMMIT:-unknown}
+        BUILD_TIME: ${BUILD_TIME:-unknown}
+    expose:
+      - "8008"
+      - "9092"
+    volumes:
+      - ./configs:/app/configs:ro
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      CONFIG_PATH: /app/configs/product-service.yaml
+      APP_ENV: ${APP_ENV:-local}
+      POSTGRES_HOST: volha-productsdb
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_USER: ${POSTGRES_USER:-volha}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-volha}
+      LOG_FORMAT: ${LOG_FORMAT:-json}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      METRICS_ENABLED: ${METRICS_ENABLED:-true}
+      METRICS_ADDR: ":9092"
+      PPROF_ENABLED: ${PPROF_ENABLED:-false}
+      OTEL_ENABLED: ${OTEL_ENABLED:-false}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      OTEL_TRACES_SAMPLER_RATIO: ${OTEL_TRACES_SAMPLER_RATIO:-0.1}
+      SLOW_REQUEST_THRESHOLD: ${SLOW_REQUEST_THRESHOLD:-1s}
+    depends_on:
+      volha-migrator:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    networks:
+      - volha-internal
+
+  volha-migrator:
+    image: volha-migrator:${VERSION:-dev}
+    build:
+      context: ../..
+      dockerfile: build/docker/migrator/Dockerfile
+      args:
+        VERSION: ${VERSION:-dev}
+        COMMIT: ${COMMIT:-unknown}
+        BUILD_TIME: ${BUILD_TIME:-unknown}
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      POSTGRES_HOST: volha-productsdb
+      APP_ENV: ${APP_ENV:-local}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_USER: ${POSTGRES_USER:-volha}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-volha}
+      POSTGRES_SSLMODE: ${POSTGRES_SSLMODE:-disable}
+      MIGRATIONS_PATH: /migrations
+    command: ["-type", "up"]
+    depends_on:
+      volha-productsdb:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - volha-internal
+
+  volha-redis:
+    image: redis:8-alpine
+    expose:
+      - "6379"
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-change-me}"]
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-change-me}
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - volha-internal
+
+  volha-productsdb:
+    image: postgres:18-alpine
+    expose:
+      - "5432"
+    volumes:
+      - postgres-data-v18:/var/lib/postgresql
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-volha}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-volha}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - volha-internal
+
+  volha-dumper:
+    image: volha-dumper:${VERSION:-dev}
+    build:
+      context: ../..
+      dockerfile: build/docker/dumper/Dockerfile
+      args:
+        VERSION: ${VERSION:-dev}
+        COMMIT: ${COMMIT:-unknown}
+        BUILD_TIME: ${BUILD_TIME:-unknown}
+    depends_on:
+      volha-productsdb:
+        condition: service_healthy
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      POSTGRES_HOST: volha-productsdb
+      APP_ENV: ${APP_ENV:-local}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_USER: ${POSTGRES_USER:-volha}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-volha}
+    volumes:
+      - ./dumps:/dumps
+    restart: unless-stopped
+    networks:
+      - volha-internal
+
+volumes:
+  postgres-data-v18:
+  volha-images:
+
+networks:
+  volha-internal:

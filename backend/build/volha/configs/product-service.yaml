@@ -1,0 +1,9 @@
+data_source: "volha-productsdb"
+port_postgres: 5432
+port: 8008
+mode: "PROD"
+max_open_conns: 10
+max_idle_conns: 5
+conn_max_lifetime: 30m
+conn_max_idle_time: 5m
+postgres_ping_timeout: 5s

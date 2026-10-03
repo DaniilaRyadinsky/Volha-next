@@ -1,0 +1,14 @@
+groups:
+  - name: volha-recording
+    rules:
+      - record: volha:http_request_rate5m
+        expr: sum by (service, route, method) (rate(volha_http_requests_total{route!~"/health/(live|ready)"}[5m]))
+
+      - record: volha:http_error_rate5m
+        expr: sum by (service, route) (rate(volha_http_requests_total{route!~"/health/(live|ready)", status=~"5.."}[5m]))
+
+      - record: volha:grpc_server_request_rate5m
+        expr: sum by (service, grpc_service, grpc_method) (rate(volha_grpc_server_requests_total[5m]))
+
+      - record: volha:grpc_server_error_rate5m
+        expr: sum by (service, grpc_service, grpc_method) (rate(volha_grpc_server_requests_total{grpc_code!="OK"}[5m]))

@@ -1,0 +1,16 @@
+{
+  "uid": "volha-product-service",
+  "title": "Volha / Product Service",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {"type": "timeseries", "title": "gRPC Request Rate", "gridPos": {"x": 0, "y": 0, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_grpc_server_requests_total{service=\"volha-product-service\"}[5m])) by (grpc_method)"}]},
+    {"type": "timeseries", "title": "gRPC Latency p50/p95/p99", "gridPos": {"x": 12, "y": 0, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.50, sum by (le, grpc_method) (rate(volha_grpc_server_request_duration_seconds_bucket{service=\"volha-product-service\"}[5m])))"}, {"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.95, sum by (le, grpc_method) (rate(volha_grpc_server_request_duration_seconds_bucket{service=\"volha-product-service\"}[5m])))"}, {"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.99, sum by (le, grpc_method) (rate(volha_grpc_server_request_duration_seconds_bucket{service=\"volha-product-service\"}[5m])))"}]},
+    {"type": "timeseries", "title": "gRPC Status Codes", "gridPos": {"x": 0, "y": 6, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_grpc_server_requests_total{service=\"volha-product-service\"}[5m])) by (grpc_code)"}]},
+    {"type": "timeseries", "title": "DB Pool Open/In-use/Idle", "gridPos": {"x": 12, "y": 6, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "volha_db_pool_open_connections{service=\"volha-product-service\"} or volha_db_pool_in_use_connections{service=\"volha-product-service\"} or volha_db_pool_idle_connections{service=\"volha-product-service\"}"}]},
+    {"type": "timeseries", "title": "DB Wait Count", "gridPos": {"x": 0, "y": 12, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "volha_db_pool_wait_count_total{service=\"volha-product-service\"}"}]},
+    {"type": "timeseries", "title": "DB Wait Duration", "gridPos": {"x": 12, "y": 12, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "volha_db_pool_wait_duration_seconds_total{service=\"volha-product-service\"}"}]}
+  ]
+}

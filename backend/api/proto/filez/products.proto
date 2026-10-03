@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package products;
+
+option go_package = "github.com/autumnterror/volha-backend;productsRPC";
+
+import "google/protobuf/empty.proto";
+import "domain.proto";
+
+service Products {
+  rpc GetDictionaries(Id) returns (Dictionaries);
+
+  // Products
+  rpc CreateProduct(ProductId) returns (google.protobuf.Empty);
+  rpc UpdateProduct(ProductId) returns (google.protobuf.Empty);
+  rpc DeleteProduct(Id) returns (google.protobuf.Empty);
+  rpc GetAllProducts(Pagination) returns (ProductList);
+  rpc GetProduct(Id) returns (Product);
+  rpc FilterProducts(ProductFilter) returns (ProductList);
+
+  // Brands
+  rpc CreateBrand(Brand) returns (google.protobuf.Empty);
+  rpc UpdateBrand(Brand) returns (google.protobuf.Empty);
+  rpc DeleteBrand(Id) returns (google.protobuf.Empty);
+  rpc GetAllBrands(google.protobuf.Empty) returns (BrandList);
+  rpc GetBrand(Id) returns (Brand);
+
+  // Categories
+  rpc CreateCategory(Category) returns (google.protobuf.Empty);
+  rpc UpdateCategory(Category) returns (google.protobuf.Empty);
+  rpc DeleteCategory(Id) returns (google.protobuf.Empty);
+  rpc GetAllCategories(google.protobuf.Empty) returns (CategoryList);
+  rpc GetCategory(Id) returns (Category);
+
+  // Countries
+  rpc CreateCountry(Country) returns (google.protobuf.Empty);
+  rpc UpdateCountry(Country) returns (google.protobuf.Empty);
+  rpc DeleteCountry(Id) returns (google.protobuf.Empty);
+  rpc GetAllCountries(google.protobuf.Empty) returns (CountryList);
+  rpc GetCountry(Id) returns (Country);
+
+  // Materials
+  rpc CreateMaterial(Material) returns (google.protobuf.Empty);
+  rpc UpdateMaterial(Material) returns (google.protobuf.Empty);
+  rpc DeleteMaterial(Id) returns (google.protobuf.Empty);
+  rpc GetAllMaterials(google.protobuf.Empty) returns (MaterialList);
+  rpc GetMaterial(Id) returns (Material);
+
+  // Colors
+  rpc CreateColor(Color) returns (google.protobuf.Empty);
+  rpc UpdateColor(Color) returns (google.protobuf.Empty);
+  rpc DeleteColor(Id) returns (google.protobuf.Empty);
+  rpc GetAllColors(google.protobuf.Empty) returns (ColorList);
+  rpc GetColor(Id) returns (Color);
+
+  // Slides
+  rpc CreateSlide(Slide) returns (google.protobuf.Empty);
+  rpc UpdateSlide(Slide) returns (google.protobuf.Empty);
+  rpc DeleteSlide(Id) returns (google.protobuf.Empty);
+  rpc GetAllSlides(google.protobuf.Empty) returns (SlideList);
+  rpc GetSlide(Id) returns (Slide);
+
+  // Blog
+  rpc CreateArticle(Article) returns (google.protobuf.Empty);
+  rpc UpdateArticle(Article) returns (google.protobuf.Empty);
+  rpc DeleteArticle(Id) returns (google.protobuf.Empty);
+  rpc GetAllArticles(google.protobuf.Empty) returns (ArticleList);
+  rpc GetArticle(Id) returns (Article);
+
+  // Product Color Photos
+  rpc CreateProductColorPhotos(ProductColorPhotos) returns (google.protobuf.Empty);
+  rpc UpdateProductColorPhotos(ProductColorPhotos) returns (google.protobuf.Empty);
+  rpc DeleteProductColorPhotos(ProductColorPhotosId) returns (google.protobuf.Empty);
+  rpc GetAllProductColorPhotos(google.protobuf.Empty) returns (ProductColorPhotosList);
+  rpc GetProductColorPhotosByProduct(Id) returns (ProductColorPhotosList);
+  rpc GetPhotosByProductAndColor(ProductColorPhotosId) returns (PhotoList);
+  rpc IsFileReferenced(FileReferenceRequest) returns (FileReferenceResponse);
+}

@@ -1,0 +1,22 @@
+{
+  "uid": "volha-overview",
+  "title": "Volha / Overview",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {"type": "stat", "title": "Gateway UP", "gridPos": {"x": 0, "y": 0, "w": 4, "h": 4}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "up{job=\"gateway\"}"}]},
+    {"type": "stat", "title": "Product Service UP", "gridPos": {"x": 4, "y": 0, "w": 4, "h": 4}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "up{job=\"product-service\"}"}]},
+    {"type": "stat", "title": "PostgreSQL UP", "gridPos": {"x": 8, "y": 0, "w": 4, "h": 4}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "up{job=\"postgres-exporter\"}"}]},
+    {"type": "stat", "title": "Redis UP", "gridPos": {"x": 12, "y": 0, "w": 4, "h": 4}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "up{job=\"redis-exporter\"}"}]},
+    {"type": "timeseries", "title": "Requests/sec", "gridPos": {"x": 0, "y": 4, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_http_requests_total{route!~\"/health/(live|ready)\"}[5m])) by (service)"}]},
+    {"type": "timeseries", "title": "HTTP Error Rate", "gridPos": {"x": 8, "y": 4, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_http_requests_total{route!~\"/health/(live|ready)\", status=~\"5..\"}[5m])) by (service)"}]},
+    {"type": "timeseries", "title": "HTTP Latency p50/p95/p99", "gridPos": {"x": 0, "y": 10, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.50, sum by (le, service) (rate(volha_http_request_duration_seconds_bucket{route!~\"/health/(live|ready)\"}[5m])))"}, {"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.95, sum by (le, service) (rate(volha_http_request_duration_seconds_bucket{route!~\"/health/(live|ready)\"}[5m])))"}, {"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.99, sum by (le, service) (rate(volha_http_request_duration_seconds_bucket{route!~\"/health/(live|ready)\"}[5m])))"}]},
+    {"type": "timeseries", "title": "gRPC Rate / Errors / p95", "gridPos": {"x": 12, "y": 10, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_grpc_server_requests_total[5m])) by (service)"}, {"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_grpc_server_requests_total{grpc_code!=\"OK\"}[5m])) by (service)"}, {"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.95, sum by (le, service) (rate(volha_grpc_server_request_duration_seconds_bucket[5m])))"}]},
+    {"type": "timeseries", "title": "DB Pool Usage", "gridPos": {"x": 0, "y": 16, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "volha_db_pool_open_connections{service=\"volha-product-service\"} or volha_db_pool_in_use_connections{service=\"volha-product-service\"} or volha_db_pool_idle_connections{service=\"volha-product-service\"}"}]},
+    {"type": "timeseries", "title": "Redis Cache hit/miss/error", "gridPos": {"x": 8, "y": 16, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(volha_redis_cache_operations_total{service=\"volha-gateway\"}[5m])) by (cache, operation, result)"}]},
+    {"type": "timeseries", "title": "Container CPU", "gridPos": {"x": 0, "y": 22, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(container_cpu_usage_seconds_total{name!=\"\"}[5m])) by (name)"}]},
+    {"type": "timeseries", "title": "Container Memory", "gridPos": {"x": 12, "y": 22, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "container_memory_usage_bytes{name!=\"\"}"}]}
+  ]
+}

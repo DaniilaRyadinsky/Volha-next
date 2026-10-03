@@ -1,0 +1,98 @@
+groups:
+  - name: volha-availability
+    rules:
+      - alert: VolhaGatewayDown
+        expr: up{job="gateway"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Volha gateway metrics target is down
+          description: Prometheus cannot scrape the volha-gateway metrics endpoint for more than 1 minute.
+          severity: critical
+
+      - alert: VolhaProductServiceDown
+        expr: up{job="product-service"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Volha product-service metrics target is down
+          description: Prometheus cannot scrape the volha-product-service metrics endpoint for more than 1 minute.
+          severity: critical
+
+      - alert: VolhaPostgresExporterDown
+        expr: up{job="postgres-exporter"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: PostgreSQL exporter is down
+          description: Prometheus cannot scrape postgres-exporter for more than 2 minutes.
+          severity: warning
+
+      - alert: VolhaRedisExporterDown
+        expr: up{job="redis-exporter"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Redis exporter is down
+          description: Prometheus cannot scrape redis-exporter for more than 2 minutes.
+          severity: warning
+
+      - alert: VolhaGatewayReadyProbeFailed
+        expr: probe_success{instance="http://volha-gateway:8080/health/ready"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Gateway readiness probe is failing
+          description: The blackbox readiness probe for volha-gateway /health/ready has failed for more than 1 minute.
+          severity: critical
+
+  - name: volha-errors-latency
+    rules:
+      - alert: VolhaGatewayHigh5xxRate
+        expr: |
+          (
+            sum(rate(volha_http_requests_total{service="volha-gateway", route!~"/health/(live|ready)", status=~"5.."}[5m]))
+            /
+            sum(rate(volha_http_requests_total{service="volha-gateway", route!~"/health/(live|ready)"}[5m]))
+          ) > 0.05
+          and sum(rate(volha_http_requests_total{service="volha-gateway", route!~"/health/(live|ready)"}[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: HTTP 5xx rate is above 5 percent
+          description: More than 5 percent of HTTP requests are returning 5xx while total HTTP traffic is above 0.1 requests/second.
+          severity: warning
+
+      - alert: VolhaGatewayHighHTTPLatencyP95
+        expr: |
+          histogram_quantile(0.95, sum by (le) (rate(volha_http_request_duration_seconds_bucket{service="volha-gateway", route!~"/health/(live|ready)"}[5m]))) > 1
+          and sum(rate(volha_http_requests_total{service="volha-gateway", route!~"/health/(live|ready)"}[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: HTTP p95 latency is above 1 second
+          description: HTTP p95 latency is above 1 second while the service is receiving more than 0.1 requests/second.
+          severity: warning
+
+      - alert: VolhaProductServiceHighGrpcErrorRate
+        expr: |
+          (
+            sum(rate(volha_grpc_server_requests_total{service="volha-product-service", grpc_code=~"Unknown|Internal|Unavailable|DeadlineExceeded|DataLoss|ResourceExhausted"}[5m]))
+            /
+            sum(rate(volha_grpc_server_requests_total{service="volha-product-service"}[5m]))
+          ) > 0.05
+          and sum(rate(volha_grpc_server_requests_total{service="volha-product-service"}[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: gRPC server error rate is above 5 percent
+          description: More than 5 percent of gRPC requests are server-failure codes while total gRPC traffic is above 0.1 requests/second.
+          severity: warning

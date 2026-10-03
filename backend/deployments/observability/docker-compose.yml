@@ -1,0 +1,201 @@
+services:
+  volha-gateway:
+    environment:
+      OTEL_ENABLED: "true"
+      OTEL_EXPORTER_OTLP_ENDPOINT: alloy:4317
+    networks:
+      - volha-internal
+      - volha-observability
+
+  volha-product-service:
+    environment:
+      OTEL_ENABLED: "true"
+      OTEL_EXPORTER_OTLP_ENDPOINT: alloy:4317
+    networks:
+      - volha-internal
+      - volha-observability
+
+  prometheus:
+    image: prom/prometheus:v3.13.2
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+    volumes:
+      - ../../deployments/observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../deployments/observability/prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    networks:
+      - volha-observability
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:v0.33.1
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+    volumes:
+      - ../../deployments/observability/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    ports:
+      - "127.0.0.1:9093:9093"
+    networks:
+      - volha-observability
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:13.1.3
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-volha-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-change-me}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ../../deployments/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../../deployments/observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - volha-observability
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:3.7.6
+    command: -config.file=/etc/loki/loki.yml
+    volumes:
+      - ../../deployments/observability/loki/loki.yml:/etc/loki/loki.yml:ro
+      - loki-data:/loki
+    expose:
+      - "3100"
+    networks:
+      - volha-observability
+    restart: unless-stopped
+
+  tempo:
+    image: grafana/tempo:3.0.2
+    command: ["-config.file=/etc/tempo/tempo.yml"]
+    volumes:
+      - ../../deployments/observability/tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - tempo-data:/var/tempo
+    expose:
+      - "3200"
+      - "4317"
+    networks:
+      - volha-observability
+    restart: unless-stopped
+
+  alloy:
+    image: grafana/alloy:v1.18.1
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+    volumes:
+      - ../../deployments/observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloy-data:/var/lib/alloy/data
+    ports:
+      - "127.0.0.1:12345:12345"
+    expose:
+      - "4317"
+    networks:
+      - volha-observability
+    depends_on:
+      - loki
+      - tempo
+    restart: unless-stopped
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.20.1
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      DATA_SOURCE_URI: "volha-productsdb:5432/${POSTGRES_DB:-volha}?sslmode=disable"
+      DATA_SOURCE_USER: ${POSTGRES_USER:-volha}
+      DATA_SOURCE_PASS: ${POSTGRES_PASSWORD:-change-me}
+    expose:
+      - "9187"
+    networks:
+      - volha-internal
+      - volha-observability
+    restart: unless-stopped
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.89.0
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      REDIS_ADDR: redis://volha-redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-change-me}
+    expose:
+      - "9121"
+    networks:
+      - volha-internal
+      - volha-observability
+    restart: unless-stopped
+
+  cadvisor:
+    image: ghcr.io/google/cadvisor:v0.60.2
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    expose:
+      - "8080"
+    networks:
+      - volha-observability
+    restart: unless-stopped
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.28.0
+    command: --config.file=/etc/blackbox_exporter/config.yml
+    volumes:
+      - ../../deployments/observability/exporters/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    expose:
+      - "9115"
+    networks:
+      - volha-observability
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:v1.12.1
+    profiles:
+      - linux-host
+    command:
+      - --path.rootfs=/host
+    volumes:
+      - /:/host:ro,rslave
+    expose:
+      - "9100"
+    networks:
+      - volha-observability
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  alertmanager-data:
+  grafana-data:
+  loki-data:
+  tempo-data:
+  alloy-data:
+
+networks:
+  volha-internal:
+    external: false
+  volha-observability:
+    name: volha-observability

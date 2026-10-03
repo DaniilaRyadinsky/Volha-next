@@ -1,0 +1,19 @@
+{
+  "uid": "volha-infrastructure",
+  "title": "Volha / Infrastructure",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {"type": "timeseries", "title": "Container CPU", "gridPos": {"x": 0, "y": 0, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(container_cpu_usage_seconds_total{name!=\"\"}[5m])) by (name)"}]},
+    {"type": "timeseries", "title": "Container Memory", "gridPos": {"x": 12, "y": 0, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "container_memory_usage_bytes{name!=\"\"}"}]},
+    {"type": "timeseries", "title": "Container Network", "gridPos": {"x": 0, "y": 6, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(rate(container_network_receive_bytes_total[5m]) + rate(container_network_transmit_bytes_total[5m])) by (name)"}]},
+    {"type": "stat", "title": "Container Running State", "gridPos": {"x": 12, "y": 6, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "up{job=\"cadvisor\"}"}]},
+    {"type": "timeseries", "title": "PostgreSQL Connections", "gridPos": {"x": 0, "y": 12, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "pg_stat_activity_count"}]},
+    {"type": "timeseries", "title": "PostgreSQL Transactions", "gridPos": {"x": 8, "y": 12, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "rate(pg_stat_database_xact_commit[5m]) + rate(pg_stat_database_xact_rollback[5m])"}]},
+    {"type": "timeseries", "title": "PostgreSQL Size / Locks", "gridPos": {"x": 16, "y": 12, "w": 8, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "pg_database_size_bytes or pg_locks_count"}]},
+    {"type": "timeseries", "title": "Redis Memory / Clients", "gridPos": {"x": 0, "y": 18, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "redis_memory_used_bytes or redis_connected_clients"}]},
+    {"type": "timeseries", "title": "Redis Commands / Keyspace", "gridPos": {"x": 12, "y": 18, "w": 12, "h": 6}, "targets": [{"datasource": {"uid": "prometheus"}, "expr": "rate(redis_commands_processed_total[5m]) or redis_db_keys"}]}
+  ]
+}

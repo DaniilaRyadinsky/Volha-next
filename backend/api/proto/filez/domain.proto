@@ -1,0 +1,199 @@
+syntax = "proto3";
+
+package products;
+
+option go_package = "github.com/autumnterror/volha-backend;productsRPC";
+
+message Pagination {
+  int32 offset = 1;
+  int32 limit = 2;
+}
+message Id {
+  string id = 1;
+}
+
+message Title {
+  string title = 1;
+}
+
+message ProductList {
+  repeated Product items = 1;
+  int32 total = 2;
+  int32 offset = 3;
+  int32 limit = 4;
+}
+
+message BrandList {
+  repeated Brand items = 1;
+}
+
+message CategoryList {
+  repeated Category items = 1;
+}
+
+message CountryList {
+  repeated Country items = 1;
+}
+
+message MaterialList {
+  repeated Material items = 1;
+}
+
+message ColorList {
+  repeated Color items = 1;
+}
+
+message SlideList {
+  repeated Slide items = 1;
+}
+
+message ArticleList {
+  repeated Article items = 1;
+}
+
+message ProductColorPhotos {
+  string product_id = 1;
+  string color_id = 2;
+  repeated string photos = 3;
+}
+
+message ProductColorPhotosId {
+  string product_id = 1;
+  string color_id = 2;
+}
+
+message ProductColorPhotosList {
+  repeated ProductColorPhotos items = 1;
+}
+
+message FileReferenceRequest {
+  string filename = 1;
+}
+
+message FileReferenceResponse {
+  bool referenced = 1;
+}
+
+message PhotoList {
+  repeated string items = 1;
+}
+
+message Product {
+  string id = 1;
+  string title = 2;
+  string article = 3;
+  Brand brand = 4;
+  Category category = 5;
+  Country country = 6;
+  int32 width = 7;
+  int32 height = 8;
+  int32 depth = 9;
+  repeated Material materials = 10;
+  repeated Color colors = 11;
+  repeated string photos = 12;
+  repeated Product seems = 13;
+  int32 price = 14;
+  string description = 15;
+}
+
+message ProductId {
+  string id = 1;
+  string title = 2;
+  string article = 3;
+  string brand = 4;
+  string category = 5;
+  string country = 6;
+  int32 width = 7;
+  int32 height = 8;
+  int32 depth = 9;
+  repeated string materials = 10;
+  repeated string colors = 11;
+  repeated string photos = 12;
+  repeated string seems = 13;
+  int32 price = 14;
+  string description = 15;
+}
+
+message ProductFilter {
+  repeated string brand = 1;
+  repeated string country = 2;
+  repeated string category = 3;
+  int32 min_width = 4;
+  int32 max_width = 5;
+  int32 min_height = 6;
+  int32 max_height = 7;
+  int32 min_depth = 8;
+  int32 max_depth = 9;
+  repeated string materials = 10;
+  repeated string colors = 11;
+  int32 min_price = 12;
+  int32 max_price = 13;
+  string sort_by = 14;
+  string sort_order = 15;
+  int32 offset = 16;
+  int32 limit = 17;
+  string title = 18;
+}
+
+message Dictionaries {
+  repeated Brand brands = 1;
+  repeated Category categories = 2;
+  repeated Country countries = 3;
+  repeated Material materials = 4;
+  repeated Color colors = 5;
+
+  int32 min_price = 6;
+  int32 max_price = 7;
+  int32 min_width = 8;
+  int32 max_width = 9;
+  int32 min_height = 10;
+  int32 max_height = 11;
+  int32 min_depth = 12;
+  int32 max_depth = 13;
+}
+
+message Brand {
+  string id = 1;
+  string title = 2;
+}
+
+message Category {
+  string id = 1;
+  string title = 2;
+  string uri = 3;
+  string img = 4;
+}
+
+message Country {
+  string id = 1;
+  string title = 2;
+  string friendly = 3;
+}
+
+message Material {
+  string id = 1;
+  string title = 2;
+}
+
+message Color {
+  string id = 1;
+  string title = 2;
+  string hex = 3;
+}
+
+message Slide {
+  string id = 1;
+  string link = 2;
+  string img = 3;
+  string img762 = 4;
+}
+
+message Article {
+  string id = 1;
+  string img = 2;
+  string title = 3;
+  string text = 4;
+  int64 creationTime = 5;
+}
+
+

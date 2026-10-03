@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS articles;
+DROP TABLE IF EXISTS slides;
+DROP TABLE IF EXISTS product_color_photos;
+DROP TABLE IF EXISTS product_similarities;
+DROP TABLE IF EXISTS product_colors;
+DROP TABLE IF EXISTS product_materials;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS colors;
+DROP TABLE IF EXISTS materials;
+DROP TABLE IF EXISTS countries;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS brands;
