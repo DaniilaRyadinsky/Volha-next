@@ -3,10 +3,12 @@ package domain
 import productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 
 type Category struct {
-	Id    string `json:"id"`
-	Title string `json:"title"`
-	Uri   string `json:"uri"`
-	Img   string `json:"img"`
+	Id          string `json:"id"`
+	Slug        string `json:"slug"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Count       int32  `json:"count"`
+	Img         string `json:"img"`
 }
 
 func CategoryFromRpc(c *productsRPC.Category) *Category {
@@ -14,10 +16,12 @@ func CategoryFromRpc(c *productsRPC.Category) *Category {
 		return nil
 	}
 	return &Category{
-		Id:    c.GetId(),
-		Title: c.GetTitle(),
-		Uri:   c.GetUri(),
-		Img:   c.GetImg(),
+		Id:          c.GetId(),
+		Slug:        c.GetSlug(),
+		Title:       c.GetTitle(),
+		Description: c.GetDescription(),
+		Count:       c.GetCount(),
+		Img:         c.GetImg(),
 	}
 }
 
@@ -26,10 +30,12 @@ func CategoryToRpc(c *Category) *productsRPC.Category {
 		return nil
 	}
 	return &productsRPC.Category{
-		Id:    c.Id,
-		Title: c.Title,
-		Uri:   c.Uri,
-		Img:   c.Img,
+		Id:          c.Id,
+		Slug:        c.Slug,
+		Title:       c.Title,
+		Description: c.Description,
+		Count:       c.Count,
+		Img:         c.Img,
 	}
 }
 

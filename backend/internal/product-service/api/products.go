@@ -9,13 +9,13 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (s *ServerAPI) FilterProducts(ctx context.Context, req *productsRPC.ProductFilter) (*productsRPC.ProductList, error) {
+func (s *ServerAPI) FilterProducts(ctx context.Context, req *productsRPC.ProductFilter) (*productsRPC.ProductCatalogList, error) {
 	const op = "grpc.FilterProducts"
 
 	res, err := handleCRUDResponse(ctx, op, func() (any, error) {
 		pr, t, err := s.s.FilterProducts(ctx, domain.ProductFilterFromRpc(req))
-		return &productsRPC.ProductList{
-			Items:  domain.ProductsToRpc(pr),
+		return &productsRPC.ProductCatalogList{
+			Items:  domain.ProductCatalogItemsToRpc(pr),
 			Total:  int32(t),
 			Offset: req.GetOffset(),
 			Limit:  req.GetLimit(),
@@ -25,7 +25,7 @@ func (s *ServerAPI) FilterProducts(ctx context.Context, req *productsRPC.Product
 		return nil, err
 	}
 
-	return res.(*productsRPC.ProductList), nil
+	return res.(*productsRPC.ProductCatalogList), nil
 }
 
 func (s *ServerAPI) GetAllProducts(ctx context.Context, req *productsRPC.Pagination) (*productsRPC.ProductList, error) {

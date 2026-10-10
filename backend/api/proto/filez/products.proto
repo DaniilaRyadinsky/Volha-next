@@ -16,7 +16,7 @@ service Products {
   rpc DeleteProduct(Id) returns (google.protobuf.Empty);
   rpc GetAllProducts(Pagination) returns (ProductList);
   rpc GetProduct(Id) returns (Product);
-  rpc FilterProducts(ProductFilter) returns (ProductList);
+  rpc FilterProducts(ProductFilter) returns (ProductCatalogList);
 
   // Brands
   rpc CreateBrand(Brand) returns (google.protobuf.Empty);
@@ -59,13 +59,6 @@ service Products {
   rpc DeleteSlide(Id) returns (google.protobuf.Empty);
   rpc GetAllSlides(google.protobuf.Empty) returns (SlideList);
   rpc GetSlide(Id) returns (Slide);
-
-  // Blog
-  rpc CreateArticle(Article) returns (google.protobuf.Empty);
-  rpc UpdateArticle(Article) returns (google.protobuf.Empty);
-  rpc DeleteArticle(Id) returns (google.protobuf.Empty);
-  rpc GetAllArticles(google.protobuf.Empty) returns (ArticleList);
-  rpc GetArticle(Id) returns (Article);
 
   // Product Color Photos
   rpc CreateProductColorPhotos(ProductColorPhotos) returns (google.protobuf.Empty);

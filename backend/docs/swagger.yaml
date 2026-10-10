@@ -41,19 +41,6 @@ definitions:
       min_width:
         type: integer
     type: object
-  productsRPC.Article:
-    properties:
-      creationTime:
-        type: integer
-      id:
-        type: string
-      img:
-        type: string
-      text:
-        type: string
-      title:
-        type: string
-    type: object
   productsRPC.Brand:
     properties:
       id:
@@ -63,13 +50,17 @@ definitions:
     type: object
   productsRPC.Category:
     properties:
+      count:
+        type: integer
+      description:
+        type: string
       id:
         type: string
       img:
         type: string
-      title:
+      slug:
         type: string
-      uri:
+      title:
         type: string
     type: object
   productsRPC.Color:
@@ -158,6 +149,8 @@ definitions:
         type: integer
       id:
         type: string
+      isFeatured:
+        type: boolean
       materials:
         items:
           $ref: '#/definitions/productsRPC.Material'
@@ -168,10 +161,14 @@ definitions:
         type: array
       price:
         type: integer
+      pricesale:
+        type: integer
       seems:
         items:
           $ref: '#/definitions/productsRPC.Product'
         type: array
+      slug:
+        type: string
       title:
         type: string
       width:
@@ -266,6 +263,8 @@ definitions:
         type: integer
       id:
         type: string
+      isFeatured:
+        type: boolean
       materials:
         items:
           type: string
@@ -276,10 +275,14 @@ definitions:
         type: array
       price:
         type: integer
+      pricesale:
+        type: integer
       seems:
         items:
           type: string
         type: array
+      slug:
+        type: string
       title:
         type: string
       width:
@@ -287,6 +290,10 @@ definitions:
     type: object
   productsRPC.Slide:
     properties:
+      badge:
+        type: string
+      description:
+        type: string
       id:
         type: string
       img:
@@ -294,6 +301,8 @@ definitions:
       img762:
         type: string
       link:
+        type: string
+      title:
         type: string
     type: object
   view.ErrorResponse:
@@ -320,6 +329,38 @@ definitions:
         example: some info
         type: string
     type: object
+  view.ProductCatalogItem:
+    properties:
+      category:
+        type: string
+      id:
+        type: string
+      image:
+        type: string
+      isFeatured:
+        type: boolean
+      price:
+        type: integer
+      pricesale:
+        type: integer
+      slug:
+        type: string
+      title:
+        type: string
+    type: object
+  view.ProductCatalogList:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/view.ProductCatalogItem'
+        type: array
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -329,145 +370,6 @@ info:
   title: Volha gateway REST API
   version: "0.1"
 paths:
-  /api/article:
-    delete:
-      description: Удаляет статью по ID
-      parameters:
-      - description: ID статью
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: успех
-          schema:
-            $ref: '#/definitions/view.MessageResponse'
-        "400":
-          description: неправильный ввод
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-        "404":
-          description: не найдено
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-        "502":
-          description: ошибка в микросервисе
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-      summary: Удалить статью
-      tags:
-      - blog
-    get:
-      description: Возвращает статью по id
-      parameters:
-      - description: ID статью
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: успех
-          schema:
-            $ref: '#/definitions/productsRPC.Article'
-        "502":
-          description: ошибка в микросервисе
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-      summary: Получить статью
-      tags:
-      - blog
-    post:
-      consumes:
-      - application/json
-      description: Добавляет новую статью. Id и CreationTime создаются автоматически.
-        Можно передавать значения по умолчанию
-      parameters:
-      - description: Данные новой статьи
-        in: body
-        name: article
-        required: true
-        schema:
-          $ref: '#/definitions/productsRPC.Article'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: успех
-          schema:
-            $ref: '#/definitions/view.IDResponse'
-        "400":
-          description: неправильный ввод
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-        "409":
-          description: уже существует
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-        "502":
-          description: ошибка в микросервисе
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-      summary: Создать новую статью
-      tags:
-      - blog
-    put:
-      consumes:
-      - application/json
-      description: Обновляет информацию о статье по ID
-      parameters:
-      - description: Данные статьи
-        in: body
-        name: article
-        required: true
-        schema:
-          $ref: '#/definitions/productsRPC.Article'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: успех
-          schema:
-            $ref: '#/definitions/view.MessageResponse'
-        "400":
-          description: неправильный ввод
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-        "404":
-          description: не найдено
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-        "502":
-          description: ошибка в микросервисе
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-      summary: Обновить статью
-      tags:
-      - blog
-  /api/article/all:
-    get:
-      description: Возвращает список статей
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: успех
-          schema:
-            items:
-              $ref: '#/definitions/productsRPC.Article'
-            type: array
-        "502":
-          description: ошибка в микросервисе
-          schema:
-            $ref: '#/definitions/view.ErrorResponse'
-      summary: Получить все статьи
-      tags:
-      - blog
   /api/brand:
     delete:
       description: Удаляет бренд по ID
@@ -1595,9 +1497,7 @@ paths:
         "200":
           description: Успешный запрос
           schema:
-            items:
-              $ref: '#/definitions/productsRPC.Product'
-            type: array
+            $ref: '#/definitions/view.ProductCatalogList'
         "400":
           description: Неверный формат запроса
           schema:

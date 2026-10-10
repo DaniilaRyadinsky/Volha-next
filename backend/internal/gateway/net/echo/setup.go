@@ -117,11 +117,6 @@ func New(rds *redis.Client, a *products.Client, cfg *config.Config, obsCfg obser
 			sl.GET("/all", h.GetAllSlides)
 			sl.GET("", h.GetSlide)
 		}
-		art := userApi.Group("/article")
-		{
-			art.GET("/all", h.GetAllArticles)
-			art.GET("", h.GetArticle)
-		}
 	}
 
 	adminApi := e.Group("/api", mw.CheckId(), mw.DevAdminAuth(cfg))
@@ -184,12 +179,6 @@ func New(rds *redis.Client, a *products.Client, cfg *config.Config, obsCfg obser
 			sl.POST("", h.CreateSlide)
 			sl.PUT("", h.UpdateSlide)
 			sl.DELETE("", h.DeleteSlide)
-		}
-		art := adminApi.Group("/article")
-		{
-			art.POST("", h.CreateArticle)
-			art.PUT("", h.UpdateArticle)
-			art.DELETE("", h.DeleteArticle)
 		}
 	}
 

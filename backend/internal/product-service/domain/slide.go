@@ -3,10 +3,13 @@ package domain
 import productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 
 type Slide struct {
-	Id     string `json:"id"`
-	Link   string `json:"link"`
-	Img    string `json:"img"`
-	Img762 string `json:"img762"`
+	Id          string `json:"id"`
+	Link        string `json:"link"`
+	Img         string `json:"img"`
+	Img762      string `json:"img762"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Badge       string `json:"badge"`
 }
 
 func SlideFromRpc(s *productsRPC.Slide) *Slide {
@@ -14,10 +17,13 @@ func SlideFromRpc(s *productsRPC.Slide) *Slide {
 		return nil
 	}
 	return &Slide{
-		Id:     s.GetId(),
-		Link:   s.GetLink(),
-		Img:    s.GetImg(),
-		Img762: s.GetImg762(),
+		Id:          s.GetId(),
+		Link:        s.GetLink(),
+		Img:         s.GetImg(),
+		Img762:      s.GetImg762(),
+		Title:       s.GetTitle(),
+		Description: s.GetDescription(),
+		Badge:       s.GetBadge(),
 	}
 }
 
@@ -26,10 +32,13 @@ func SlideToRpc(s *Slide) *productsRPC.Slide {
 		return nil
 	}
 	return &productsRPC.Slide{
-		Id:     s.Id,
-		Link:   s.Link,
-		Img:    s.Img,
-		Img762: s.Img762,
+		Id:          s.Id,
+		Link:        s.Link,
+		Img:         s.Img,
+		Img762:      s.Img762,
+		Title:       s.Title,
+		Description: s.Description,
+		Badge:       s.Badge,
 	}
 }
 

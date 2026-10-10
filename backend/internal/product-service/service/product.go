@@ -82,7 +82,7 @@ func (s *ProductsService) DeleteProduct(ctx context.Context, id string) error {
 	})
 }
 
-func (s *ProductsService) FilterProducts(ctx context.Context, filter *domain.ProductFilter) ([]*domain.Product, int, error) {
+func (s *ProductsService) FilterProducts(ctx context.Context, filter *domain.ProductFilter) ([]*domain.ProductCatalogItem, int, error) {
 	const op = "service.FilterProducts"
 
 	if err := validateFilter(filter); err != nil {

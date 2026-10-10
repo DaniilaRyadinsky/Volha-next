@@ -130,7 +130,7 @@ func (a *Apis) GetProduct(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param filter body productsRPC.ProductFilter true "Параметры фильтрации"
-// @Success 200 {object} []productsRPC.Product "Успешный запрос"
+// @Success 200 {object} view.ProductCatalogList "Успешный запрос"
 // @Failure 400 {object} view.ErrorResponse "Неверный формат запроса"
 // @Failure 502 {object} view.ErrorResponse "Ошибка взаимодействия с сервисом"
 // @Router /api/product/filter [post]
@@ -151,13 +151,28 @@ func (a *Apis) FilterProducts(c echo.Context) error {
 		return c.JSON(code, swg)
 	}
 
-	items := list.GetItems()
-	if len(items) == 0 {
-		list.Items = []*productsRPC.Product{}
-		return c.JSON(http.StatusOK, list)
+	items := make([]view.ProductCatalogItem, 0, len(list.GetItems()))
+	for _, item := range list.GetItems() {
+		if item == nil {
+			continue
+		}
+		items = append(items, view.ProductCatalogItem{
+			ID:         item.GetId(),
+			Slug:       item.GetSlug(),
+			Category:   item.GetCategory(),
+			Title:      item.GetTitle(),
+			Price:      item.GetPrice(),
+			Image:      item.GetImage(),
+			PriceSale:  item.GetPricesale(),
+			IsFeatured: item.GetIsFeatured(),
+		})
 	}
-
-	return c.JSON(http.StatusOK, list)
+	return c.JSON(http.StatusOK, view.ProductCatalogList{
+		Items:  items,
+		Total:  list.GetTotal(),
+		Offset: list.GetOffset(),
+		Limit:  list.GetLimit(),
+	})
 }
 
 // GetAllProducts godoc

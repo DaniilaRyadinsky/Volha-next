@@ -1,0 +1,13 @@
+ALTER TABLE categories
+    ADD COLUMN description TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE slides
+    ADD COLUMN title TEXT NOT NULL DEFAULT '',
+    ADD COLUMN description TEXT NOT NULL DEFAULT '',
+    ADD COLUMN badge TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE products
+    ADD COLUMN is_featured BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD COLUMN pricesale INT NOT NULL DEFAULT 0 CHECK (pricesale >= 0);
+
+DROP TABLE articles;

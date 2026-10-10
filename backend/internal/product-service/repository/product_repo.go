@@ -19,7 +19,7 @@ type ProductRepo interface {
 	CreateProduct(ctx context.Context, p *domain.ProductId) error
 	UpdateProduct(ctx context.Context, p *domain.ProductId) error
 	DeleteProduct(ctx context.Context, id string) error
-	FilterProducts(ctx context.Context, filter *domain.ProductFilter) ([]*domain.Product, int, error)
+	FilterProducts(ctx context.Context, filter *domain.ProductFilter) ([]*domain.ProductCatalogItem, int, error)
 }
 
 type rowScanner interface {
@@ -70,7 +70,7 @@ func (d Driver) CreateProduct(ctx context.Context, p *domain.ProductId) error {
 		ctx,
 		createProductQuery,
 		p.Id, p.Title, p.Article, p.Brand, p.Category, p.Country, p.Width, p.Height, p.Depth,
-		pq.Array(p.Photos), p.Price, p.Description,
+		pq.Array(p.Photos), p.Price, p.Description, p.IsFeatured, p.PriceSale, p.Slug,
 		pq.Array(p.Materials), pq.Array(p.Colors), pq.Array(p.Seems),
 	)
 	if err != nil {
@@ -86,7 +86,7 @@ func (d Driver) UpdateProduct(ctx context.Context, p *domain.ProductId) error {
 	var updated int
 	err := d.Driver.QueryRowContext(ctx, updateProductQuery,
 		p.Id, p.Title, p.Article, p.Brand, p.Category, p.Country, p.Width, p.Height, p.Depth,
-		pq.Array(p.Photos), p.Price, p.Description,
+		pq.Array(p.Photos), p.Price, p.Description, p.IsFeatured, p.PriceSale, p.Slug,
 		pq.Array(p.Materials), pq.Array(p.Colors), pq.Array(p.Seems),
 	).Scan(&updated)
 	if err != nil {
@@ -117,7 +117,7 @@ func (d Driver) DeleteProduct(ctx context.Context, id string) error {
 	return nil
 }
 
-func (d Driver) FilterProducts(ctx context.Context, filter *domain.ProductFilter) ([]*domain.Product, int, error) {
+func (d Driver) FilterProducts(ctx context.Context, filter *domain.ProductFilter) ([]*domain.ProductCatalogItem, int, error) {
 	const op = "PostgresDb.FilterProducts"
 
 	conditions, args := buildProductFilter(filter)
@@ -126,7 +126,7 @@ func (d Driver) FilterProducts(ctx context.Context, filter *domain.ProductFilter
 		return nil, 0, err
 	}
 
-	query := productListSelectQuery
+	query := productCatalogSelectQuery
 	if len(conditions) > 0 {
 		query += " WHERE " + strings.Join(conditions, " AND ")
 	}
@@ -143,7 +143,7 @@ func (d Driver) FilterProducts(ctx context.Context, filter *domain.ProductFilter
 	}
 	defer rows.Close()
 
-	products, err := scanProductList(op, rows)
+	products, err := scanProductCatalogList(op, rows)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -281,6 +281,30 @@ func scanProductList(op string, rows *sql.Rows) ([]*domain.Product, error) {
 	return products, nil
 }
 
+func scanProductCatalogList(op string, rows *sql.Rows) ([]*domain.ProductCatalogItem, error) {
+	items := make([]*domain.ProductCatalogItem, 0)
+	for rows.Next() {
+		var item domain.ProductCatalogItem
+		if err := rows.Scan(
+			&item.Id,
+			&item.Slug,
+			&item.Category,
+			&item.Title,
+			&item.Price,
+			&item.Image,
+			&item.PriceSale,
+			&item.IsFeatured,
+		); err != nil {
+			return nil, format.Error(op, err)
+		}
+		items = append(items, &item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, format.Error(op, err)
+	}
+	return items, nil
+}
+
 func scanProduct(row rowScanner) (*domain.Product, error) {
 	p, fields, err := scanProductFields(row)
 	if err != nil {
@@ -305,17 +329,22 @@ func scanProductFields(row rowScanner, extra ...any) (*domain.Product, productJS
 		&p.Id,
 		&p.Title,
 		&p.Article,
+		&p.Slug,
 		&p.Width,
 		&p.Height,
 		&p.Depth,
 		pq.Array(&p.Photos),
 		&p.Price,
 		&p.Description,
+		&p.IsFeatured,
+		&p.PriceSale,
 		&p.Brand.Id,
 		&p.Brand.Title,
 		&p.Category.Id,
+		&p.Category.Slug,
 		&p.Category.Title,
-		&p.Category.Uri,
+		&p.Category.Description,
+		&p.Category.Count,
 		&p.Category.Img,
 		&p.Country.Id,
 		&p.Country.Title,

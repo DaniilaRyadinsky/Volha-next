@@ -30,7 +30,7 @@ func TestProductGood(t *testing.T) {
 	})
 
 	brand := &domain.Brand{Id: uniqueID(t, "brand"), Title: uniqueTitle(t, "TestBrand")}
-	category := &domain.Category{Id: uniqueID(t, "cat"), Title: uniqueTitle(t, "TestCategory"), Uri: uniqueTitle(t, "test-cat"), Img: "cat.jpg"}
+	category := &domain.Category{Id: uniqueID(t, "cat"), Title: uniqueTitle(t, "TestCategory"), Slug: uniqueTitle(t, "test-cat"), Img: "cat.jpg"}
 	country := &domain.Country{Id: uniqueID(t, "country"), Title: uniqueTitle(t, "TestCountry"), Friendly: "Friendly"}
 	material := &domain.Material{Id: uniqueID(t, "mat"), Title: uniqueTitle(t, "Leather")}
 	color := &domain.Color{Id: uniqueID(t, "color"), Title: uniqueTitle(t, "Red"), Hex: "#FF0000"}
@@ -45,6 +45,7 @@ func TestProductGood(t *testing.T) {
 	assert.NoError(t, driver.CreateProduct(ctx, &domain.ProductId{
 		Id:          productID,
 		Title:       uniqueTitle(t, "test"),
+		Slug:        uniqueID(t, "slug"),
 		Article:     uniqueTitle(t, "article"),
 		Brand:       brand.Id,
 		Category:    category.Id,
@@ -70,6 +71,7 @@ func TestProductGood(t *testing.T) {
 	assert.NoError(t, driver.UpdateProduct(ctx, &domain.ProductId{
 		Id:          productID,
 		Title:       updatedTitle,
+		Slug:        uniqueID(t, "slug"),
 		Article:     uniqueTitle(t, "new_article"),
 		Brand:       brand.Id,
 		Category:    category.Id,
@@ -110,7 +112,7 @@ func TestProductFilters(t *testing.T) {
 	t.Cleanup(func() { _ = tx.Rollback() })
 
 	brand := &domain.Brand{Id: uniqueID(t, "brand_filter"), Title: uniqueTitle(t, "TestBrand")}
-	category := &domain.Category{Id: uniqueID(t, "cat_filter"), Title: uniqueTitle(t, "TestCategory"), Uri: uniqueTitle(t, "test-cat-filter"), Img: "cat.jpg"}
+	category := &domain.Category{Id: uniqueID(t, "cat_filter"), Title: uniqueTitle(t, "TestCategory"), Slug: uniqueTitle(t, "test-cat-filter"), Img: "cat.jpg"}
 	country := &domain.Country{Id: uniqueID(t, "country_filter"), Title: uniqueTitle(t, "TestCountry"), Friendly: "Friendly"}
 	material := &domain.Material{Id: uniqueID(t, "mat_filter"), Title: uniqueTitle(t, "Leather")}
 	color := &domain.Color{Id: uniqueID(t, "color_filter"), Title: uniqueTitle(t, "Red"), Hex: "#FF0000"}
@@ -123,6 +125,7 @@ func TestProductFilters(t *testing.T) {
 	product := &domain.ProductId{
 		Id:          uniqueID(t, "prod_filter"),
 		Title:       uniqueTitle(t, "FilterProduct"),
+		Slug:        uniqueID(t, "slug_filter"),
 		Article:     uniqueTitle(t, "F-001"),
 		Brand:       brand.Id,
 		Category:    category.Id,

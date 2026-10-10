@@ -46,8 +46,8 @@ func validateCategory(c *domain.Category) error {
 	if c.Title == "" {
 		return errors.New("category title is empty")
 	}
-	if c.Uri == "" {
-		return errors.New("category uri is empty")
+	if c.Slug == "" {
+		return errors.New("category slug is empty")
 	}
 	return nil
 }
@@ -113,31 +113,6 @@ func validateSlide(sl *domain.Slide) error {
 	return nil
 }
 
-func validateArticle(a *domain.Article) error {
-	return validateArticleFields(a)
-}
-
-func validateArticleUpdate(a *domain.Article) error {
-	return validateArticleFields(a)
-}
-
-func validateArticleFields(a *domain.Article) error {
-	if a == nil {
-		return errors.New("object is nil")
-	}
-	if err := validateID(a.Id); err != nil {
-		return err
-	}
-	if a.Title == "" {
-		return errors.New("article title is empty")
-	}
-	if a.Img == "" {
-		return errors.New("article img is empty")
-	}
-
-	return nil
-}
-
 func validatePCPIDs(productID, colorID string) error {
 	if err := validateID(productID); err != nil {
 		return err
@@ -171,6 +146,9 @@ func validateProductPayload(p *domain.ProductId) error {
 	if p.Title == "" {
 		return errors.New("product title is empty")
 	}
+	if p.Slug == "" {
+		return errors.New("product slug is empty")
+	}
 	if p.Article == "" {
 		return errors.New("product article is empty")
 	}
@@ -188,6 +166,9 @@ func validateProductPayload(p *domain.ProductId) error {
 	}
 	if p.Price <= 0 {
 		return errors.New("price must be greater than zero")
+	}
+	if p.PriceSale < 0 {
+		return errors.New("pricesale must not be negative")
 	}
 	if p.Width <= 0 || p.Height <= 0 || p.Depth <= 0 {
 		return errors.New("dimensions must be greater than zero")

@@ -5,6 +5,7 @@ import productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 type Product struct {
 	Id          string      `json:"id"`
 	Title       string      `json:"title"`
+	Slug        string      `json:"slug"`
 	Article     string      `json:"article"`
 	Brand       *Brand      `json:"brand"`
 	Category    *Category   `json:"category"`
@@ -18,11 +19,14 @@ type Product struct {
 	Seems       []*Product  `json:"seems"`
 	Price       int32       `json:"price"`
 	Description string      `json:"description"`
+	IsFeatured  bool        `json:"isFeatured"`
+	PriceSale   int32       `json:"pricesale"`
 }
 
 type ProductId struct {
 	Id          string   `json:"id"`
 	Title       string   `json:"title"`
+	Slug        string   `json:"slug"`
 	Article     string   `json:"article"`
 	Brand       string   `json:"brand"`
 	Category    string   `json:"category"`
@@ -36,12 +40,46 @@ type ProductId struct {
 	Seems       []string `json:"seems"`
 	Price       int32    `json:"price"`
 	Description string   `json:"description"`
+	IsFeatured  bool     `json:"isFeatured"`
+	PriceSale   int32    `json:"pricesale"`
+}
+
+type ProductCatalogItem struct {
+	Id         string `json:"id"`
+	Slug       string `json:"slug"`
+	Category   string `json:"category"`
+	Title      string `json:"title"`
+	Price      int32  `json:"price"`
+	Image      string `json:"image"`
+	PriceSale  int32  `json:"pricesale"`
+	IsFeatured bool   `json:"isFeatured"`
+}
+
+func ProductCatalogItemsToRpc(items []*ProductCatalogItem) []*productsRPC.ProductCatalogItem {
+	res := make([]*productsRPC.ProductCatalogItem, 0, len(items))
+	for _, item := range items {
+		if item == nil {
+			continue
+		}
+		res = append(res, &productsRPC.ProductCatalogItem{
+			Id:         item.Id,
+			Slug:       item.Slug,
+			Category:   item.Category,
+			Title:      item.Title,
+			Price:      item.Price,
+			Image:      item.Image,
+			Pricesale:  item.PriceSale,
+			IsFeatured: item.IsFeatured,
+		})
+	}
+	return res
 }
 
 func NewEmptyProduct() Product {
 	return Product{
 		Id:      "",
 		Title:   "",
+		Slug:    "",
 		Article: "",
 		Brand: &Brand{
 			Id:    "",
@@ -50,7 +88,7 @@ func NewEmptyProduct() Product {
 		Category: &Category{
 			Id:    "",
 			Title: "",
-			Uri:   "",
+			Slug:  "",
 			Img:   "",
 		},
 		Country: &Country{
@@ -67,6 +105,8 @@ func NewEmptyProduct() Product {
 		Seems:       []*Product{},
 		Price:       0,
 		Description: "",
+		IsFeatured:  false,
+		PriceSale:   0,
 	}
 }
 
@@ -120,6 +160,7 @@ func ProductFromRpc(p *productsRPC.Product) *Product {
 	return &Product{
 		Id:          p.GetId(),
 		Title:       p.GetTitle(),
+		Slug:        p.GetSlug(),
 		Article:     p.GetArticle(),
 		Brand:       BrandFromRpc(p.GetBrand()),
 		Category:    CategoryFromRpc(p.GetCategory()),
@@ -133,6 +174,8 @@ func ProductFromRpc(p *productsRPC.Product) *Product {
 		Seems:       seems,
 		Price:       p.GetPrice(),
 		Description: p.GetDescription(),
+		IsFeatured:  p.GetIsFeatured(),
+		PriceSale:   p.GetPricesale(),
 	}
 }
 
@@ -165,6 +208,7 @@ func ProductToRpc(p *Product) *productsRPC.Product {
 	return &productsRPC.Product{
 		Id:          p.Id,
 		Title:       p.Title,
+		Slug:        p.Slug,
 		Article:     p.Article,
 		Brand:       BrandToRpc(p.Brand),
 		Category:    CategoryToRpc(p.Category),
@@ -178,6 +222,8 @@ func ProductToRpc(p *Product) *productsRPC.Product {
 		Seems:       seems,
 		Price:       p.Price,
 		Description: p.Description,
+		IsFeatured:  p.IsFeatured,
+		Pricesale:   p.PriceSale,
 	}
 }
 
@@ -208,6 +254,7 @@ func ProductIdFromRpc(p *productsRPC.ProductId) *ProductId {
 	return &ProductId{
 		Id:          p.GetId(),
 		Title:       p.GetTitle(),
+		Slug:        p.GetSlug(),
 		Article:     p.GetArticle(),
 		Brand:       p.GetBrand(),
 		Category:    p.GetCategory(),
@@ -221,6 +268,8 @@ func ProductIdFromRpc(p *productsRPC.ProductId) *ProductId {
 		Seems:       append([]string{}, p.GetSeems()...),
 		Price:       p.GetPrice(),
 		Description: p.GetDescription(),
+		IsFeatured:  p.GetIsFeatured(),
+		PriceSale:   p.GetPricesale(),
 	}
 }
 
@@ -231,6 +280,7 @@ func ProductIdToRpc(p *ProductId) *productsRPC.ProductId {
 	return &productsRPC.ProductId{
 		Id:          p.Id,
 		Title:       p.Title,
+		Slug:        p.Slug,
 		Article:     p.Article,
 		Brand:       p.Brand,
 		Category:    p.Category,
@@ -244,6 +294,8 @@ func ProductIdToRpc(p *ProductId) *productsRPC.ProductId {
 		Seems:       append([]string{}, p.Seems...),
 		Price:       p.Price,
 		Description: p.Description,
+		IsFeatured:  p.IsFeatured,
+		Pricesale:   p.PriceSale,
 	}
 }
 

@@ -5,7 +5,6 @@ package integration
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/autumnterror/volha-backend/internal/product-service/config"
 	"github.com/autumnterror/volha-backend/internal/product-service/domain"
@@ -30,7 +29,7 @@ func TestFileReferenceAndProductColorPhotosByProduct(t *testing.T) {
 	})
 
 	brand := &domain.Brand{Id: "brand_ref", Title: "Reference Brand"}
-	category := &domain.Category{Id: "cat_ref", Title: "Reference Cat", Uri: "reference-cat", Img: "category-ref.jpg"}
+	category := &domain.Category{Id: "cat_ref", Title: "Reference Cat", Slug: "reference-cat", Img: "category-ref.jpg"}
 	country := &domain.Country{Id: "country_ref", Title: "Reference Country", Friendly: "Reference Friendly"}
 	material := &domain.Material{Id: "mat_ref", Title: "Reference Material"}
 	color := &domain.Color{Id: "color_ref", Title: "Reference Color", Hex: "#123456"}
@@ -43,6 +42,7 @@ func TestFileReferenceAndProductColorPhotosByProduct(t *testing.T) {
 	require.NoError(t, driver.CreateProduct(ctx, &domain.ProductId{
 		Id:          "product_ref",
 		Title:       "Reference Product",
+		Slug:        "reference-product",
 		Article:     "reference-product",
 		Brand:       brand.Id,
 		Category:    category.Id,
@@ -68,13 +68,6 @@ func TestFileReferenceAndProductColorPhotosByProduct(t *testing.T) {
 		Img:    "slide-ref.jpg",
 		Img762: "slide-762-ref.jpg",
 	}))
-	require.NoError(t, driver.CreateArticle(ctx, &domain.Article{
-		Id:           "article_ref",
-		Img:          "article-ref.jpg",
-		Title:        "Reference Article",
-		Text:         "reference article",
-		CreationTime: time.Now().UTC().Unix(),
-	}))
 
 	for _, filename := range []string{
 		"category-ref.jpg",
@@ -82,7 +75,6 @@ func TestFileReferenceAndProductColorPhotosByProduct(t *testing.T) {
 		"pcp-ref.jpg",
 		"slide-ref.jpg",
 		"slide-762-ref.jpg",
-		"article-ref.jpg",
 	} {
 		referenced, err := driver.IsFileReferenced(ctx, filename)
 		require.NoError(t, err)

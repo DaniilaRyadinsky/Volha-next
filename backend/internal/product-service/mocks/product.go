@@ -47,7 +47,7 @@ type ProductRepo struct {
 	CreateProductFn  func(context.Context, *domain.ProductId) error
 	UpdateProductFn  func(context.Context, *domain.ProductId) error
 	DeleteProductFn  func(context.Context, string) error
-	FilterProductsFn func(context.Context, *domain.ProductFilter) ([]*domain.Product, int, error)
+	FilterProductsFn func(context.Context, *domain.ProductFilter) ([]*domain.ProductCatalogItem, int, error)
 }
 
 func (r ProductRepo) GetAllProducts(ctx context.Context, offset, limit int) ([]*domain.Product, int, error) {
@@ -70,6 +70,6 @@ func (r ProductRepo) DeleteProduct(ctx context.Context, id string) error {
 	return r.DeleteProductFn(ctx, id)
 }
 
-func (r ProductRepo) FilterProducts(ctx context.Context, filter *domain.ProductFilter) ([]*domain.Product, int, error) {
+func (r ProductRepo) FilterProducts(ctx context.Context, filter *domain.ProductFilter) ([]*domain.ProductCatalogItem, int, error) {
 	return r.FilterProductsFn(ctx, filter)
 }

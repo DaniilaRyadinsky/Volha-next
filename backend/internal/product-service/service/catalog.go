@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"github.com/autumnterror/volha-backend/internal/product-service/domain"
 )
@@ -376,72 +375,5 @@ func (s *ProductsService) DeleteSlide(ctx context.Context, id string) error {
 			return wrapServiceCheck(op, err)
 		}
 		return repo.DeleteSlide(ctx, id)
-	})
-}
-
-func (s *ProductsService) GetAllArticles(ctx context.Context) ([]*domain.Article, error) {
-	repo, err := s.catalogRepo(ctx)
-	if err != nil {
-		return nil, wrapServiceCheck("service.GetAllArticles", err)
-	}
-	return repo.GetAllArticles(ctx)
-}
-
-func (s *ProductsService) GetArticle(ctx context.Context, id string) (*domain.Article, error) {
-	const op = "service.GetArticle"
-	if err := validateID(id); err != nil {
-		return nil, wrapServiceCheck(op, err)
-	}
-	repo, err := s.catalogRepo(ctx)
-	if err != nil {
-		return nil, wrapServiceCheck(op, err)
-	}
-	return repo.GetArticle(ctx, id)
-}
-
-func (s *ProductsService) CreateArticle(ctx context.Context, a *domain.Article) error {
-	const op = "service.CreateArticle"
-	if a != nil {
-		cp := *a
-		cp.CreationTime = time.Now().UTC().Unix()
-		a = &cp
-	}
-	if err := validateArticle(a); err != nil {
-		return wrapServiceCheck(op, err)
-	}
-	return s.runInTx(ctx, op, func(ctx context.Context) error {
-		repo, err := s.catalogRepo(ctx)
-		if err != nil {
-			return wrapServiceCheck(op, err)
-		}
-		return repo.CreateArticle(ctx, a)
-	})
-}
-
-func (s *ProductsService) UpdateArticle(ctx context.Context, a *domain.Article) error {
-	const op = "service.UpdateArticle"
-	if err := validateArticleUpdate(a); err != nil {
-		return wrapServiceCheck(op, err)
-	}
-	return s.runInTx(ctx, op, func(ctx context.Context) error {
-		repo, err := s.catalogRepo(ctx)
-		if err != nil {
-			return wrapServiceCheck(op, err)
-		}
-		return repo.UpdateArticle(ctx, a)
-	})
-}
-
-func (s *ProductsService) DeleteArticle(ctx context.Context, id string) error {
-	const op = "service.DeleteArticle"
-	if err := validateID(id); err != nil {
-		return wrapServiceCheck(op, err)
-	}
-	return s.runInTx(ctx, op, func(ctx context.Context) error {
-		repo, err := s.catalogRepo(ctx)
-		if err != nil {
-			return wrapServiceCheck(op, err)
-		}
-		return repo.DeleteArticle(ctx, id)
 	})
 }

@@ -31,7 +31,7 @@ func TestGoodProductColorPhotos(t *testing.T) {
 	})
 
 	brand := &domain.Brand{Id: uniqueID(t, "brand"), Title: uniqueTitle(t, "TestBrand")}
-	category := &domain.Category{Id: uniqueID(t, "cat"), Title: uniqueTitle(t, "TestCategory"), Uri: uniqueTitle(t, "test-cat")}
+	category := &domain.Category{Id: uniqueID(t, "cat"), Title: uniqueTitle(t, "TestCategory"), Slug: uniqueTitle(t, "test-cat")}
 	country := &domain.Country{Id: uniqueID(t, "country"), Title: uniqueTitle(t, "TestCountry"), Friendly: "Friendly"}
 	material := &domain.Material{Id: uniqueID(t, "mat"), Title: uniqueTitle(t, "Leather")}
 	color := &domain.Color{Id: uniqueID(t, "color"), Title: uniqueTitle(t, "Red"), Hex: "#FF0000"}
@@ -45,6 +45,7 @@ func TestGoodProductColorPhotos(t *testing.T) {
 	assert.NoError(t, driver.CreateProduct(ctx, &domain.ProductId{
 		Id:          productID,
 		Title:       uniqueTitle(t, "test"),
+		Slug:        uniqueID(t, "slug"),
 		Article:     uniqueTitle(t, "article"),
 		Brand:       brand.Id,
 		Category:    category.Id,

@@ -63,8 +63,8 @@ func parseDictionaryRows(rows *sql.Rows) (*domain.Dictionaries, error) {
 	}
 
 	for rows.Next() {
-		var typ, id, field1, field2, field3 string
-		if err := rows.Scan(&typ, &id, &field1, &field2, &field3); err != nil {
+		var typ, id, field1, field2, field3, field4, field5 string
+		if err := rows.Scan(&typ, &id, &field1, &field2, &field3, &field4, &field5); err != nil {
 			return nil, format.Error(op, err)
 		}
 
@@ -72,7 +72,11 @@ func parseDictionaryRows(rows *sql.Rows) (*domain.Dictionaries, error) {
 		case "brand":
 			result.Brands = append(result.Brands, &domain.Brand{Id: id, Title: field1})
 		case "category":
-			result.Categories = append(result.Categories, &domain.Category{Id: id, Title: field1, Uri: field2, Img: field3})
+			count, err := strconv.Atoi(field5)
+			if err != nil {
+				return nil, format.Error(op, err)
+			}
+			result.Categories = append(result.Categories, &domain.Category{Id: id, Title: field1, Slug: field2, Img: field3, Description: field4, Count: int32(count)})
 		case "country":
 			result.Countries = append(result.Countries, &domain.Country{Id: id, Title: field1, Friendly: field2})
 		case "material":

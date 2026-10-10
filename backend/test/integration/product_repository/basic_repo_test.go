@@ -5,7 +5,6 @@ package integration
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/autumnterror/volha-backend/internal/product-service/config"
 	"github.com/autumnterror/volha-backend/internal/product-service/domain"
@@ -40,11 +39,11 @@ func TestCatalogRepoGood(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, driver.DeleteBrand(ctx, brand.Id))
 
-	category := &domain.Category{Id: uniqueID(t, "cat"), Title: uniqueTitle(t, "Test Cat"), Uri: uniqueTitle(t, "test-uri")}
+	category := &domain.Category{Id: uniqueID(t, "cat"), Title: uniqueTitle(t, "Test Cat"), Slug: uniqueTitle(t, "test-uri")}
 	assert.NoError(t, driver.CreateCategory(ctx, category))
 	_, err = driver.GetAllCategories(ctx)
 	assert.NoError(t, err)
-	assert.NoError(t, driver.UpdateCategory(ctx, &domain.Category{Id: category.Id, Title: uniqueTitle(t, "Updated"), Uri: uniqueTitle(t, "upd-uri")}))
+	assert.NoError(t, driver.UpdateCategory(ctx, &domain.Category{Id: category.Id, Title: uniqueTitle(t, "Updated"), Slug: uniqueTitle(t, "upd-uri")}))
 	_, err = driver.GetCategory(ctx, category.Id)
 	assert.NoError(t, err)
 	assert.NoError(t, driver.DeleteCategory(ctx, category.Id))
@@ -85,14 +84,6 @@ func TestCatalogRepoGood(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, driver.DeleteSlide(ctx, slide.Id))
 
-	article := &domain.Article{Id: uniqueID(t, "article"), Title: uniqueTitle(t, "Title"), Img: "img.jpg", Text: "# heading", CreationTime: time.Now().Unix()}
-	assert.NoError(t, driver.CreateArticle(ctx, article))
-	_, err = driver.GetAllArticles(ctx)
-	assert.NoError(t, err)
-	assert.NoError(t, driver.UpdateArticle(ctx, &domain.Article{Id: article.Id, Title: uniqueTitle(t, "newTitle"), Img: "newimg.jpg", Text: "# newheading", CreationTime: time.Now().Unix()}))
-	_, err = driver.GetArticle(ctx, article.Id)
-	assert.NoError(t, err)
-	assert.NoError(t, driver.DeleteArticle(ctx, article.Id))
 }
 
 func TestCatalogRepoNotFound(t *testing.T) {
@@ -113,7 +104,7 @@ func TestCatalogRepoNotFound(t *testing.T) {
 
 	assert.ErrorIs(t, driver.UpdateBrand(ctx, &domain.Brand{Id: "not_exist", Title: "Test Brand"}), domain.ErrNotFound)
 	assert.ErrorIs(t, driver.DeleteBrand(ctx, "not_exist"), domain.ErrNotFound)
-	assert.ErrorIs(t, driver.UpdateCategory(ctx, &domain.Category{Id: "not_exist", Title: "Test Cat", Uri: "test-uri"}), domain.ErrNotFound)
+	assert.ErrorIs(t, driver.UpdateCategory(ctx, &domain.Category{Id: "not_exist", Title: "Test Cat", Slug: "test-uri"}), domain.ErrNotFound)
 	assert.ErrorIs(t, driver.DeleteCategory(ctx, "not_exist"), domain.ErrNotFound)
 	assert.ErrorIs(t, driver.UpdateCountry(ctx, &domain.Country{Id: "not_exist", Title: "Test Country", Friendly: "FriendlyName"}), domain.ErrNotFound)
 	assert.ErrorIs(t, driver.DeleteCountry(ctx, "not_exist"), domain.ErrNotFound)
@@ -123,6 +114,4 @@ func TestCatalogRepoNotFound(t *testing.T) {
 	assert.ErrorIs(t, driver.DeleteColor(ctx, "not_exist"), domain.ErrNotFound)
 	assert.ErrorIs(t, driver.UpdateSlide(ctx, &domain.Slide{Id: "not_exist"}), domain.ErrNotFound)
 	assert.ErrorIs(t, driver.DeleteSlide(ctx, "not_exist"), domain.ErrNotFound)
-	assert.ErrorIs(t, driver.UpdateArticle(ctx, &domain.Article{Id: "not_exist"}), domain.ErrNotFound)
-	assert.ErrorIs(t, driver.DeleteArticle(ctx, "not_exist"), domain.ErrNotFound)
 }

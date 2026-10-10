@@ -23,6 +23,24 @@ message ProductList {
   int32 limit = 4;
 }
 
+message ProductCatalogItem {
+  string id = 1;
+  string slug = 2;
+  string category = 3;
+  string title = 4;
+  int32 price = 5;
+  string image = 6;
+  int32 pricesale = 7;
+  bool isFeatured = 8;
+}
+
+message ProductCatalogList {
+  repeated ProductCatalogItem items = 1;
+  int32 total = 2;
+  int32 offset = 3;
+  int32 limit = 4;
+}
+
 message BrandList {
   repeated Brand items = 1;
 }
@@ -45,10 +63,6 @@ message ColorList {
 
 message SlideList {
   repeated Slide items = 1;
-}
-
-message ArticleList {
-  repeated Article items = 1;
 }
 
 message ProductColorPhotos {
@@ -94,6 +108,9 @@ message Product {
   repeated Product seems = 13;
   int32 price = 14;
   string description = 15;
+  bool isFeatured = 16;
+  int32 pricesale = 17;
+  string slug = 18;
 }
 
 message ProductId {
@@ -112,6 +129,9 @@ message ProductId {
   repeated string seems = 13;
   int32 price = 14;
   string description = 15;
+  bool isFeatured = 16;
+  int32 pricesale = 17;
+  string slug = 18;
 }
 
 message ProductFilter {
@@ -159,8 +179,10 @@ message Brand {
 
 message Category {
   string id = 1;
+  string slug = 3;
   string title = 2;
-  string uri = 3;
+  string description = 5;
+  int32 count = 6;
   string img = 4;
 }
 
@@ -186,14 +208,9 @@ message Slide {
   string link = 2;
   string img = 3;
   string img762 = 4;
-}
-
-message Article {
-  string id = 1;
-  string img = 2;
-  string title = 3;
-  string text = 4;
-  int64 creationTime = 5;
+  string title = 5;
+  string description = 6;
+  string badge = 7;
 }
 
 

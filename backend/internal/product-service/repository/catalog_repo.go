@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
 
 	"github.com/autumnterror/volha-backend/internal/platform/format"
 	"github.com/autumnterror/volha-backend/internal/product-service/domain"
@@ -47,12 +46,6 @@ type CatalogRepo interface {
 	CreateSlide(ctx context.Context, s *domain.Slide) error
 	UpdateSlide(ctx context.Context, s *domain.Slide) error
 	DeleteSlide(ctx context.Context, id string) error
-
-	GetAllArticles(ctx context.Context) ([]*domain.Article, error)
-	GetArticle(ctx context.Context, id string) (*domain.Article, error)
-	CreateArticle(ctx context.Context, a *domain.Article) error
-	UpdateArticle(ctx context.Context, a *domain.Article) error
-	DeleteArticle(ctx context.Context, id string) error
 }
 
 func (d Driver) GetAllBrands(ctx context.Context) ([]*domain.Brand, error) {
@@ -104,7 +97,7 @@ func (d Driver) DeleteBrand(ctx context.Context, id string) error {
 
 func (d Driver) GetAllCategories(ctx context.Context) ([]*domain.Category, error) {
 	const op = "psql.GetAllCategories"
-	rows, err := d.Driver.QueryContext(ctx, `SELECT id, title, uri, img FROM categories ORDER BY title ASC, id ASC`)
+	rows, err := d.Driver.QueryContext(ctx, `SELECT c.id, c.slug, c.title, c.description, COUNT(p.id)::int, c.img FROM categories c LEFT JOIN products p ON p.category_id = c.id GROUP BY c.id ORDER BY c.title ASC, c.id ASC`)
 	if err != nil {
 		return nil, format.Error(op, err)
 	}
@@ -113,7 +106,7 @@ func (d Driver) GetAllCategories(ctx context.Context) ([]*domain.Category, error
 	items := make([]*domain.Category, 0)
 	for rows.Next() {
 		var c domain.Category
-		if err := rows.Scan(&c.Id, &c.Title, &c.Uri, &c.Img); err != nil {
+		if err := rows.Scan(&c.Id, &c.Slug, &c.Title, &c.Description, &c.Count, &c.Img); err != nil {
 			return nil, format.Error(op, err)
 		}
 		items = append(items, &c)
@@ -127,7 +120,7 @@ func (d Driver) GetAllCategories(ctx context.Context) ([]*domain.Category, error
 func (d Driver) GetCategory(ctx context.Context, id string) (*domain.Category, error) {
 	const op = "psql.GetCategory"
 	var c domain.Category
-	if err := d.Driver.QueryRowContext(ctx, `SELECT id, title, uri, img FROM categories WHERE id = $1`, id).Scan(&c.Id, &c.Title, &c.Uri, &c.Img); err != nil {
+	if err := d.Driver.QueryRowContext(ctx, `SELECT c.id, c.slug, c.title, c.description, COUNT(p.id)::int, c.img FROM categories c LEFT JOIN products p ON p.category_id = c.id WHERE c.id = $1 GROUP BY c.id`, id).Scan(&c.Id, &c.Slug, &c.Title, &c.Description, &c.Count, &c.Img); err != nil {
 		return nil, mapCatalogRowError(op, err)
 	}
 	return &c, nil
@@ -135,13 +128,13 @@ func (d Driver) GetCategory(ctx context.Context, id string) (*domain.Category, e
 
 func (d Driver) CreateCategory(ctx context.Context, c *domain.Category) error {
 	const op = "psql.CreateCategory"
-	_, err := d.Driver.ExecContext(ctx, `INSERT INTO categories (id, title, uri, img) VALUES ($1, $2, $3, $4)`, c.Id, c.Title, c.Uri, c.Img)
+	_, err := d.Driver.ExecContext(ctx, `INSERT INTO categories (id, slug, title, img, description) VALUES ($1, $2, $3, $4, $5)`, c.Id, c.Slug, c.Title, c.Img, c.Description)
 	return mapCatalogExecError(op, err)
 }
 
 func (d Driver) UpdateCategory(ctx context.Context, c *domain.Category) error {
 	const op = "psql.UpdateCategory"
-	return d.execUpdate(op, ctx, `UPDATE categories SET title = $2, uri = $3, img = $4 WHERE id = $1`, c.Id, c.Title, c.Uri, c.Img)
+	return d.execUpdate(op, ctx, `UPDATE categories SET slug = $2, title = $3, img = $4, description = $5 WHERE id = $1`, c.Id, c.Slug, c.Title, c.Img, c.Description)
 }
 
 func (d Driver) DeleteCategory(ctx context.Context, id string) error {
@@ -292,7 +285,7 @@ func (d Driver) DeleteColor(ctx context.Context, id string) error {
 
 func (d Driver) GetAllSlides(ctx context.Context) ([]*domain.Slide, error) {
 	const op = "psql.GetAllSlides"
-	rows, err := d.Driver.QueryContext(ctx, `SELECT id, link, img, img762 FROM slides ORDER BY id ASC`)
+	rows, err := d.Driver.QueryContext(ctx, `SELECT id, link, img, img762, title, description, badge FROM slides ORDER BY id ASC`)
 	if err != nil {
 		return nil, format.Error(op, err)
 	}
@@ -301,7 +294,7 @@ func (d Driver) GetAllSlides(ctx context.Context) ([]*domain.Slide, error) {
 	items := make([]*domain.Slide, 0)
 	for rows.Next() {
 		var s domain.Slide
-		if err := rows.Scan(&s.Id, &s.Link, &s.Img, &s.Img762); err != nil {
+		if err := rows.Scan(&s.Id, &s.Link, &s.Img, &s.Img762, &s.Title, &s.Description, &s.Badge); err != nil {
 			return nil, format.Error(op, err)
 		}
 		items = append(items, &s)
@@ -315,7 +308,7 @@ func (d Driver) GetAllSlides(ctx context.Context) ([]*domain.Slide, error) {
 func (d Driver) GetSlide(ctx context.Context, id string) (*domain.Slide, error) {
 	const op = "psql.GetSlide"
 	var s domain.Slide
-	if err := d.Driver.QueryRowContext(ctx, `SELECT id, link, img, img762 FROM slides WHERE id = $1`, id).Scan(&s.Id, &s.Link, &s.Img, &s.Img762); err != nil {
+	if err := d.Driver.QueryRowContext(ctx, `SELECT id, link, img, img762, title, description, badge FROM slides WHERE id = $1`, id).Scan(&s.Id, &s.Link, &s.Img, &s.Img762, &s.Title, &s.Description, &s.Badge); err != nil {
 		return nil, mapCatalogRowError(op, err)
 	}
 	return &s, nil
@@ -323,85 +316,18 @@ func (d Driver) GetSlide(ctx context.Context, id string) (*domain.Slide, error) 
 
 func (d Driver) CreateSlide(ctx context.Context, s *domain.Slide) error {
 	const op = "psql.CreateSlide"
-	_, err := d.Driver.ExecContext(ctx, `INSERT INTO slides (id, link, img, img762) VALUES ($1, $2, $3, $4)`, s.Id, s.Link, s.Img, s.Img762)
+	_, err := d.Driver.ExecContext(ctx, `INSERT INTO slides (id, link, img, img762, title, description, badge) VALUES ($1, $2, $3, $4, $5, $6, $7)`, s.Id, s.Link, s.Img, s.Img762, s.Title, s.Description, s.Badge)
 	return mapCatalogExecError(op, err)
 }
 
 func (d Driver) UpdateSlide(ctx context.Context, s *domain.Slide) error {
 	const op = "psql.UpdateSlide"
-	return d.execUpdate(op, ctx, `UPDATE slides SET link = $2, img = $3, img762 = $4 WHERE id = $1`, s.Id, s.Link, s.Img, s.Img762)
+	return d.execUpdate(op, ctx, `UPDATE slides SET link = $2, img = $3, img762 = $4, title = $5, description = $6, badge = $7 WHERE id = $1`, s.Id, s.Link, s.Img, s.Img762, s.Title, s.Description, s.Badge)
 }
 
 func (d Driver) DeleteSlide(ctx context.Context, id string) error {
 	const op = "psql.DeleteSlide"
 	return d.execUpdate(op, ctx, `DELETE FROM slides WHERE id = $1`, id)
-}
-
-func (d Driver) GetAllArticles(ctx context.Context) ([]*domain.Article, error) {
-	const op = "psql.GetAllArticles"
-	rows, err := d.Driver.QueryContext(ctx, `SELECT id, title, img, text, created_at FROM articles ORDER BY created_at DESC, id ASC`)
-	if err != nil {
-		return nil, format.Error(op, err)
-	}
-	defer rows.Close()
-
-	items := make([]*domain.Article, 0)
-	for rows.Next() {
-		a, err := scanArticleRows(rows)
-		if err != nil {
-			return nil, format.Error(op, err)
-		}
-		items = append(items, a)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, format.Error(op, err)
-	}
-	return items, nil
-}
-
-func (d Driver) GetArticle(ctx context.Context, id string) (*domain.Article, error) {
-	const op = "psql.GetArticle"
-	a, err := scanArticleRow(d.Driver.QueryRowContext(ctx, `SELECT id, title, img, text, created_at FROM articles WHERE id = $1`, id))
-	if err != nil {
-		return nil, mapCatalogRowError(op, err)
-	}
-	return a, nil
-}
-
-func (d Driver) CreateArticle(ctx context.Context, a *domain.Article) error {
-	const op = "psql.CreateArticle"
-	_, err := d.Driver.ExecContext(ctx, `INSERT INTO articles (id, title, img, text, created_at) VALUES ($1, $2, $3, $4, $5)`, a.Id, a.Title, a.Img, a.Text, time.Unix(a.CreationTime, 0).UTC())
-	return mapCatalogExecError(op, err)
-}
-
-func (d Driver) UpdateArticle(ctx context.Context, a *domain.Article) error {
-	const op = "psql.UpdateArticle"
-	return d.execUpdate(op, ctx, `UPDATE articles SET title = $2, img = $3, text = $4 WHERE id = $1`, a.Id, a.Title, a.Img, a.Text)
-}
-
-func (d Driver) DeleteArticle(ctx context.Context, id string) error {
-	const op = "psql.DeleteArticle"
-	return d.execUpdate(op, ctx, `DELETE FROM articles WHERE id = $1`, id)
-}
-
-func scanArticleRows(rows *sql.Rows) (*domain.Article, error) {
-	var a domain.Article
-	var createdAt time.Time
-	if err := rows.Scan(&a.Id, &a.Title, &a.Img, &a.Text, &createdAt); err != nil {
-		return nil, err
-	}
-	a.CreationTime = createdAt.Unix()
-	return &a, nil
-}
-
-func scanArticleRow(row *sql.Row) (*domain.Article, error) {
-	var a domain.Article
-	var createdAt time.Time
-	if err := row.Scan(&a.Id, &a.Title, &a.Img, &a.Text, &createdAt); err != nil {
-		return nil, err
-	}
-	a.CreationTime = createdAt.Unix()
-	return &a, nil
 }
 
 func (d Driver) execUpdate(op string, ctx context.Context, query string, args ...any) error {

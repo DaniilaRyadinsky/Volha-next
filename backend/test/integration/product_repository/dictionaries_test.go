@@ -31,8 +31,8 @@ func TestGetDictionaries(t *testing.T) {
 	})
 
 	brand := &domain.Brand{Id: uniqueID(t, "brand_dic"), Title: uniqueTitle(t, "Test Brand")}
-	cat := &domain.Category{Id: uniqueID(t, "cat_dic"), Title: uniqueTitle(t, "Test Cat"), Uri: uniqueTitle(t, "test-uri")}
-	cat2 := &domain.Category{Id: uniqueID(t, "cat_dic"), Title: uniqueTitle(t, "Test Cat"), Uri: uniqueTitle(t, "test-uri-2")}
+	cat := &domain.Category{Id: uniqueID(t, "cat_dic"), Title: uniqueTitle(t, "Test Cat"), Slug: uniqueTitle(t, "test-uri")}
+	cat2 := &domain.Category{Id: uniqueID(t, "cat_dic"), Title: uniqueTitle(t, "Test Cat"), Slug: uniqueTitle(t, "test-uri-2")}
 	cou := &domain.Country{Id: uniqueID(t, "country_dic"), Title: uniqueTitle(t, "Test Country"), Friendly: "FriendlyName"}
 	cou2 := &domain.Country{Id: uniqueID(t, "country_dic"), Title: uniqueTitle(t, "Test Country2"), Friendly: "FriendlyName"}
 	m := &domain.Material{Id: uniqueID(t, "mat_dic"), Title: uniqueTitle(t, "Test Material")}
@@ -40,6 +40,7 @@ func TestGetDictionaries(t *testing.T) {
 	pmax := &domain.ProductId{
 		Id:          uniqueID(t, "pmax_dic"),
 		Title:       uniqueTitle(t, "test"),
+		Slug:        uniqueID(t, "slug_max"),
 		Article:     uniqueTitle(t, "article_max"),
 		Brand:       brand.Id,
 		Category:    cat.Id,
@@ -57,6 +58,7 @@ func TestGetDictionaries(t *testing.T) {
 	pmin := &domain.ProductId{
 		Id:          uniqueID(t, "pmin_dic"),
 		Title:       uniqueTitle(t, "test2"),
+		Slug:        uniqueID(t, "slug_min"),
 		Article:     uniqueTitle(t, "article_min"),
 		Brand:       brand.Id,
 		Category:    cat2.Id,

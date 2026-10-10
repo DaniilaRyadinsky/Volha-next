@@ -5,19 +5,24 @@ SELECT
 	p.id,
 	p.title,
 	p.article,
+	p.slug,
 	p.width,
 	p.height,
 	p.depth,
 	p.photos,
 	p.price,
 	p.description,
+	p.is_featured,
+	p.pricesale,
 
 	b.id      AS brand_id,
 	b.title   AS brand_title,
 
 	cat.id    AS category_id,
+	cat.slug  AS category_slug,
 	cat.title AS category_title,
-	cat.uri   AS category_uri,
+	cat.description AS category_description,
+	(SELECT COUNT(*)::int FROM products cp WHERE cp.category_id = cat.id) AS category_count,
 	cat.img   AS category_img,
 
 	co.id       AS country_id,
@@ -64,12 +69,15 @@ SELECT
 					'id', sp.id,
 					'title', sp.title,
 					'article', sp.article,
+					'slug', sp.slug,
 					'width', sp.width,
 					'height', sp.height,
 					'depth', sp.depth,
 					'photos', sp.photos,
 					'price', sp.price,
-					'description', sp.description
+					'description', sp.description,
+					'isFeatured', sp.is_featured,
+					'pricesale', sp.pricesale
 				)
 				ORDER BY sp.id
 			)
@@ -90,19 +98,24 @@ SELECT
 	p.id,
 	p.title,
 	p.article,
+	p.slug,
 	p.width,
 	p.height,
 	p.depth,
 	p.photos,
 	p.price,
 	p.description,
+	p.is_featured,
+	p.pricesale,
 
 	b.id      AS brand_id,
 	b.title   AS brand_title,
 
 	cat.id    AS category_id,
+	cat.slug  AS category_slug,
 	cat.title AS category_title,
-	cat.uri   AS category_uri,
+	cat.description AS category_description,
+	(SELECT COUNT(*)::int FROM products cp WHERE cp.category_id = cat.id) AS category_count,
 	cat.img   AS category_img,
 
 	co.id       AS country_id,
@@ -149,12 +162,15 @@ SELECT
 					'id', sp.id,
 					'title', sp.title,
 					'article', sp.article,
+					'slug', sp.slug,
 					'width', sp.width,
 					'height', sp.height,
 					'depth', sp.depth,
 					'photos', sp.photos,
 					'price', sp.price,
-					'description', sp.description
+					'description', sp.description,
+					'isFeatured', sp.is_featured,
+					'pricesale', sp.pricesale
 				)
 				ORDER BY sp.id
 			)
@@ -175,33 +191,47 @@ SELECT COUNT(*)
 FROM products p
 `
 
+const productCatalogSelectQuery = `
+SELECT
+	p.id,
+	p.slug,
+	cat.title,
+	p.title,
+	p.price,
+	COALESCE(p.photos[1], ''),
+	p.pricesale,
+	p.is_featured
+FROM products p
+JOIN categories cat ON cat.id = p.category_id
+`
+
 const createProductQuery = `
 WITH
 	ins_product AS (
 		INSERT INTO products (
 			id, title, article, brand_id, category_id, country_id,
-			width, height, depth, photos, price, description
+			width, height, depth, photos, price, description, is_featured, pricesale, slug
 		)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
 		RETURNING id
 	),
 	ins_materials AS (
 		INSERT INTO product_materials (product_id, material_id)
 		SELECT ins_product.id, material_id
 		FROM ins_product
-		CROSS JOIN unnest($13::varchar[]) AS t(material_id)
+		CROSS JOIN unnest($16::varchar[]) AS t(material_id)
 	),
 	ins_colors AS (
 		INSERT INTO product_colors (product_id, color_id)
 		SELECT ins_product.id, color_id
 		FROM ins_product
-		CROSS JOIN unnest($14::varchar[]) AS t(color_id)
+		CROSS JOIN unnest($17::varchar[]) AS t(color_id)
 	),
 	ins_similarities AS (
 		INSERT INTO product_similarities (product_id, similar_product_id)
 		SELECT ins_product.id, similar_product_id
 		FROM ins_product
-		CROSS JOIN unnest($15::varchar[]) AS t(similar_product_id)
+		CROSS JOIN unnest($18::varchar[]) AS t(similar_product_id)
 	)
 SELECT COUNT(*) FROM ins_product;
 `
@@ -220,47 +250,50 @@ WITH
 			depth       = $9,
 			photos      = $10,
 			price       = $11,
-			description = $12
+			description = $12,
+			is_featured = $13,
+			pricesale = $14,
+			slug = $15
 		WHERE id = $1
 		RETURNING id
 	),
 	ins_materials AS (
 		INSERT INTO product_materials (product_id, material_id)
 		SELECT $1, m_id
-		FROM unnest($13::varchar[]) AS t(m_id)
+		FROM unnest($16::varchar[]) AS t(m_id)
 		WHERE EXISTS (SELECT 1 FROM upd_product)
 		ON CONFLICT (product_id, material_id) DO NOTHING
 	),
 	del_materials AS (
 		DELETE FROM product_materials pm
 		WHERE pm.product_id = $1
-		  AND NOT (pm.material_id = ANY($13::varchar[]))
+		  AND NOT (pm.material_id = ANY($16::varchar[]))
 		  AND EXISTS (SELECT 1 FROM upd_product)
 	),
 	ins_colors AS (
 		INSERT INTO product_colors (product_id, color_id)
 		SELECT $1, c_id
-		FROM unnest($14::varchar[]) AS t(c_id)
+		FROM unnest($17::varchar[]) AS t(c_id)
 		WHERE EXISTS (SELECT 1 FROM upd_product)
 		ON CONFLICT (product_id, color_id) DO NOTHING
 	),
 	del_colors AS (
 		DELETE FROM product_colors pc
 		WHERE pc.product_id = $1
-		  AND NOT (pc.color_id = ANY($14::varchar[]))
+		  AND NOT (pc.color_id = ANY($17::varchar[]))
 		  AND EXISTS (SELECT 1 FROM upd_product)
 	),
 	ins_similarities AS (
 		INSERT INTO product_similarities (product_id, similar_product_id)
 		SELECT $1, s_id
-		FROM unnest($15::varchar[]) AS t(s_id)
+		FROM unnest($18::varchar[]) AS t(s_id)
 		WHERE EXISTS (SELECT 1 FROM upd_product)
 		ON CONFLICT (product_id, similar_product_id) DO NOTHING
 	),
 	del_similarities AS (
 		DELETE FROM product_similarities ps
 		WHERE ps.product_id = $1
-		  AND NOT (ps.similar_product_id = ANY($15::varchar[]))
+		  AND NOT (ps.similar_product_id = ANY($18::varchar[]))
 		  AND EXISTS (SELECT 1 FROM upd_product)
 	)
 SELECT COUNT(*) FROM upd_product;
@@ -268,25 +301,25 @@ SELECT COUNT(*) FROM upd_product;
 
 const getDicByCatQuery = `
 SELECT * FROM (
-SELECT DISTINCT 'brand' as type, b.id, b.title, '' as extra1, '' as extra2
+SELECT DISTINCT 'brand' as type, b.id, b.title, '' as extra1, '' as extra2, '' as extra3, '' as extra4
 FROM brands b
 JOIN products p ON b.id = p.brand_id
 WHERE p.category_id = $1
 
 UNION ALL
 
-SELECT 'category', id, title, uri, img FROM categories
+SELECT 'category', c.id, c.title, c.slug, c.img, c.description, (SELECT COUNT(*)::text FROM products p WHERE p.category_id = c.id) FROM categories c
 
 UNION ALL
 
-SELECT DISTINCT 'country' as type, c.id, c.title, c.friendly, ''
+SELECT DISTINCT 'country' as type, c.id, c.title, c.friendly, '', '', ''
 FROM countries c
 JOIN products p ON c.id = p.country_id
 WHERE p.category_id = $1
 
 UNION ALL
 
-SELECT DISTINCT 'material' as type, m.id, m.title, '', ''
+SELECT DISTINCT 'material' as type, m.id, m.title, '', '', '', ''
 FROM materials m
 JOIN product_materials pm ON m.id = pm.material_id
 JOIN products p ON pm.product_id = p.id
@@ -294,7 +327,7 @@ WHERE p.category_id = $1
 
 UNION ALL
 
-SELECT DISTINCT 'color' as type, c.id, c.title, c.hex, ''
+SELECT DISTINCT 'color' as type, c.id, c.title, c.hex, '', '', ''
 FROM colors c
 JOIN product_colors pc ON c.id = pc.color_id
 JOIN products p ON pc.product_id = p.id
@@ -309,7 +342,9 @@ SELECT
 	COALESCE(MAX(price)::text, '0'),
 	COALESCE(MIN(width)::text, '0') || ',' || COALESCE(MAX(width)::text, '0') || ',' ||
 	COALESCE(MIN(height)::text, '0') || ',' || COALESCE(MAX(height)::text, '0') || ',' ||
-	COALESCE(MIN(depth)::text, '0') || ',' || COALESCE(MAX(depth)::text, '0')
+	COALESCE(MIN(depth)::text, '0') || ',' || COALESCE(MAX(depth)::text, '0'),
+	'',
+	''
 FROM products
 WHERE category_id = $1
 ) AS dictionaries
@@ -329,15 +364,15 @@ ORDER BY
 
 const getDicQuery = `
 WITH dicts AS (
-	SELECT 'brand' as type, id, title, '' as extra1, '' as extra2 FROM brands
+	SELECT 'brand' as type, id, title, '' as extra1, '' as extra2, '' as extra3, '' as extra4 FROM brands
 	UNION ALL
-	SELECT 'category', id, title, uri, img FROM categories
+	SELECT 'category', c.id, c.title, c.slug, c.img, c.description, (SELECT COUNT(*)::text FROM products p WHERE p.category_id = c.id) FROM categories c
 	UNION ALL
-	SELECT 'country', id, title, friendly, '' FROM countries
+	SELECT 'country', id, title, friendly, '', '', '' FROM countries
 	UNION ALL
-	SELECT 'material', id, title, '', '' FROM materials
+	SELECT 'material', id, title, '', '', '', '' FROM materials
 	UNION ALL
-	SELECT 'color', id, title, hex, '' FROM colors
+	SELECT 'color', id, title, hex, '', '', '' FROM colors
 ),
 stats AS (
 	SELECT
@@ -354,7 +389,7 @@ stats AS (
 SELECT * FROM (
 SELECT * FROM dicts
 UNION ALL
-SELECT 'stats', '', min_price, max_price, min_width || ',' || max_width || ',' || min_height || ',' || max_height || ',' || min_depth || ',' || max_depth FROM stats
+SELECT 'stats', '', min_price, max_price, min_width || ',' || max_width || ',' || min_height || ',' || max_height || ',' || min_depth || ',' || max_depth, '', '' FROM stats
 ) AS dictionaries
 ORDER BY
 	CASE type
