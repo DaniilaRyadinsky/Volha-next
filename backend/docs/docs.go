@@ -20,6 +20,265 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/auth/change-login": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Сменить логин",
+                "parameters": [
+                    {
+                        "description": "Пароль и новый логин",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.changeLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.AuthUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/change-password": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Сменить пароль",
+                "parameters": [
+                    {
+                        "description": "Текущий и новый пароль",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.changePasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.AuthUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "description": "Access и refresh JWT устанавливаются в HttpOnly cookies и не возвращаются в JSON.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Вход по логину или email",
+                "parameters": [
+                    {
+                        "description": "Учетные данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.AuthUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "description": "Refresh-сессия отзывается, access и refresh cookies очищаются.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Завершить сессию",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/view.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Текущий пользователь",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.AuthUser"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "description": "Refresh token ротируется; новая пара JWT устанавливается в HttpOnly cookies.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Обновить пару JWT токенов",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.AuthUser"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "description": "Access и refresh JWT устанавливаются в HttpOnly cookies и не возвращаются в JSON.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Регистрация пользователя",
+                "parameters": [
+                    {
+                        "description": "Данные пользователя",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.registerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.AuthUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/brand": {
             "get": {
                 "description": "Возвращает бренд по id",
@@ -222,6 +481,183 @@ const docTemplate = `{
                     },
                     "502": {
                         "description": "ошибка в микросервисе",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cart": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Получить корзину пользователя",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Cart"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Очистить корзину",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Cart"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cart/items": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Добавить товар в корзину",
+                "parameters": [
+                    {
+                        "description": "Товар и количество",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.cartItemRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Cart"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cart/items/{product_id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Изменить количество товара в корзине",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID товара",
+                        "name": "product_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новое количество",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.cartItemRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Cart"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Удалить товар из корзины",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID товара",
+                        "name": "product_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/productsRPC.Cart"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/view.ErrorResponse"
                         }
@@ -1951,6 +2387,75 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "handlers.cartItemRequest": {
+            "type": "object",
+            "properties": {
+                "product_id": {
+                    "type": "string",
+                    "example": "c61j5e0k4pc7j3n1k2g0"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 2
+                }
+            }
+        },
+        "handlers.changeLoginRequest": {
+            "type": "object",
+            "properties": {
+                "new_login": {
+                    "type": "string",
+                    "example": "new_login"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "StrongPassword123"
+                }
+            }
+        },
+        "handlers.changePasswordRequest": {
+            "type": "object",
+            "properties": {
+                "new_password": {
+                    "type": "string",
+                    "example": "NewPassword123"
+                },
+                "old_password": {
+                    "type": "string",
+                    "example": "OldPassword123"
+                }
+            }
+        },
+        "handlers.loginRequest": {
+            "type": "object",
+            "properties": {
+                "identifier": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "StrongPassword123"
+                }
+            }
+        },
+        "handlers.registerRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "login": {
+                    "type": "string",
+                    "example": "user_name"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "StrongPassword123"
+                }
+            }
+        },
         "model.DictionariesByCategory": {
             "type": "object",
             "properties": {
@@ -2013,10 +2518,70 @@ const docTemplate = `{
                 }
             }
         },
+        "productsRPC.AuthUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "login": {
+                    "type": "string"
+                }
+            }
+        },
         "productsRPC.Brand": {
             "type": "object",
             "properties": {
                 "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "productsRPC.Cart": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productsRPC.CartItem"
+                    }
+                },
+                "total_price": {
+                    "type": "integer"
+                },
+                "total_quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "productsRPC.CartItem": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "string"
+                },
+                "line_total": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "pricesale": {
+                    "type": "integer"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "slug": {
                     "type": "string"
                 },
                 "title": {

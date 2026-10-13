@@ -23,6 +23,8 @@ services:
       REDIS_ADDR: volha-redis:6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-change-me}
       PRODUCT_GRPC_ADDR: volha-product-service:8008
+      AUTH_GRPC_ADDR: volha-auth-service:8009
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
       LOG_FORMAT: ${LOG_FORMAT:-json}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       METRICS_ENABLED: ${METRICS_ENABLED:-true}
@@ -37,6 +39,53 @@ services:
     depends_on:
       volha-product-service:
         condition: service_started
+      volha-auth-service:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - volha-internal
+
+  volha-auth-service:
+    image: volha-auth-service:${VERSION:-dev}
+    build:
+      context: ../..
+      dockerfile: build/docker/auth-service/Dockerfile
+      args:
+        VERSION: ${VERSION:-dev}
+        COMMIT: ${COMMIT:-unknown}
+        BUILD_TIME: ${BUILD_TIME:-unknown}
+    expose:
+      - "8009"
+      - "9093"
+    volumes:
+      - ./configs:/app/configs:ro
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      CONFIG_PATH: /app/configs/auth-service.yaml
+      APP_ENV: ${APP_ENV:-local}
+      AUTH_GRPC_PORT: 8009
+      POSTGRES_HOST: volha-productsdb
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_USER: ${POSTGRES_USER:-volha}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-volha}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
+      ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL:-15m}
+      REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL:-720h}
+      LOG_FORMAT: ${LOG_FORMAT:-json}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      METRICS_ENABLED: ${METRICS_ENABLED:-true}
+      METRICS_ADDR: ":9093"
+      PPROF_ENABLED: ${PPROF_ENABLED:-false}
+      OTEL_ENABLED: ${OTEL_ENABLED:-false}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      OTEL_TRACES_SAMPLER_RATIO: ${OTEL_TRACES_SAMPLER_RATIO:-0.1}
+      SLOW_REQUEST_THRESHOLD: ${SLOW_REQUEST_THRESHOLD:-1s}
+    depends_on:
+      volha-migrator:
+        condition: service_completed_successfully
     restart: unless-stopped
     networks:
       - volha-internal

@@ -10,6 +10,7 @@ import (
 
 	_ "github.com/autumnterror/volha-backend/docs"
 	"github.com/autumnterror/volha-backend/internal/gateway/config"
+	authgrpc "github.com/autumnterror/volha-backend/internal/gateway/grpc/auth"
 	"github.com/autumnterror/volha-backend/internal/gateway/grpc/products"
 	"github.com/autumnterror/volha-backend/internal/gateway/net/echo"
 	"github.com/autumnterror/volha-backend/internal/gateway/redis"
@@ -103,6 +104,16 @@ func main() {
 			log.Error(context.Background(), "grpc product client close failed", "operation", op, "error", err)
 		}
 	}()
+	authClient, err := authgrpc.New(cfg, obsCfg, metrics)
+	if err != nil {
+		log.Error(runCtx, "auth client setup failed", "operation", op, "error", err)
+		os.Exit(1)
+	}
+	defer func() {
+		if err := authClient.Close(); err != nil {
+			log.Error(context.Background(), "grpc auth client close failed", "operation", op, "error", err)
+		}
+	}()
 
 	rds, err := redis.New(cfg, metrics)
 	if err != nil {
@@ -115,7 +126,7 @@ func main() {
 		}
 	}()
 
-	e := echo.New(rds, p, cfg, obsCfg, metrics)
+	e := echo.New(rds, p, authClient, cfg, obsCfg, metrics)
 	serverErr := make(chan error, 1)
 	go func() {
 		serverErr <- e.Run()

@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package products;
+
+option go_package = "github.com/autumnterror/volha-backend;productsRPC";
+
+import "google/protobuf/empty.proto";
+
+service AuthService {
+  rpc Register(RegisterRequest) returns (AuthResponse);
+  rpc Login(LoginRequest) returns (AuthResponse);
+  rpc Refresh(RefreshRequest) returns (AuthResponse);
+  rpc Logout(LogoutRequest) returns (google.protobuf.Empty);
+  rpc Authenticate(AuthenticateRequest) returns (AuthenticatedUser);
+  rpc ChangePassword(ChangePasswordRequest) returns (AuthUser);
+  rpc ChangeLogin(ChangeLoginRequest) returns (AuthUser);
+
+  rpc GetCart(CartRequest) returns (Cart);
+  rpc AddCartItem(CartItemRequest) returns (Cart);
+  rpc UpdateCartItem(CartItemRequest) returns (Cart);
+  rpc RemoveCartItem(CartItemKey) returns (Cart);
+  rpc ClearCart(CartRequest) returns (Cart);
+}
+
+message RegisterRequest {
+  string email = 1;
+  string login = 2;
+  string password = 3;
+}
+
+message LoginRequest {
+  string identifier = 1;
+  string password = 2;
+}
+
+message RefreshRequest {
+  string refresh_token = 1;
+}
+
+message LogoutRequest {
+  string refresh_token = 1;
+}
+
+message AuthenticateRequest {
+  string access_token = 1;
+}
+
+message AuthUser {
+  string id = 1;
+  string email = 2;
+  string login = 3;
+}
+
+message AuthResponse {
+  AuthUser user = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+  int64 access_expires_in = 4;
+  int64 refresh_expires_in = 5;
+}
+
+message AuthenticatedUser {
+  AuthUser user = 1;
+  string session_id = 2;
+}
+
+message ChangePasswordRequest {
+  string user_id = 1;
+  string session_id = 2;
+  string old_password = 3;
+  string new_password = 4;
+}
+
+message ChangeLoginRequest {
+  string user_id = 1;
+  string session_id = 2;
+  string password = 3;
+  string new_login = 4;
+}
+
+message CartRequest {
+  string user_id = 1;
+}
+
+message CartItemRequest {
+  string user_id = 1;
+  string product_id = 2;
+  int32 quantity = 3;
+}
+
+message CartItemKey {
+  string user_id = 1;
+  string product_id = 2;
+}
+
+message CartItem {
+  string product_id = 1;
+  string slug = 2;
+  string title = 3;
+  int32 quantity = 4;
+  int32 price = 5;
+  int32 pricesale = 6;
+  string image = 7;
+  int64 line_total = 8;
+}
+
+message Cart {
+  repeated CartItem items = 1;
+  int32 total_quantity = 2;
+  int64 total_price = 3;
+}

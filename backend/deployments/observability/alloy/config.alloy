@@ -12,7 +12,7 @@ discovery.relabel "volha_apps" {
 
 	rule {
 		source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
-		regex         = "volha-gateway|volha-product-service|volha-dumper"
+		regex         = "volha-gateway|volha-product-service|volha-auth-service|volha-dumper"
 		action        = "keep"
 	}
 

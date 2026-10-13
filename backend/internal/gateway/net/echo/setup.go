@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/autumnterror/volha-backend/internal/gateway/config"
+	authgrpc "github.com/autumnterror/volha-backend/internal/gateway/grpc/auth"
 	"github.com/autumnterror/volha-backend/internal/gateway/grpc/products"
 	"github.com/autumnterror/volha-backend/internal/gateway/net/handlers"
 	"github.com/autumnterror/volha-backend/internal/gateway/net/mw"
@@ -29,6 +30,7 @@ type Echo struct {
 	cfg        *config.Config
 	rds        *redis.Client
 	apiProduct *products.Client
+	apiAuth    *authgrpc.Client
 }
 
 const (
@@ -36,18 +38,18 @@ const (
 	MaxUploadBytes = 10 << 20 // 10 MB
 )
 
-func New(rds *redis.Client, a *products.Client, cfg *config.Config, obsCfg observability.Config, metrics *observability.Metrics) *Echo {
+func New(rds *redis.Client, a *products.Client, authClient *authgrpc.Client, cfg *config.Config, obsCfg observability.Config, metrics *observability.Metrics) *Echo {
 	e := echo.New()
 
-	h := handlers.New(a, rds, cfg)
+	h := handlers.New(a, authClient, rds, cfg)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/health/live", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, health.Live())
 	})
 	e.GET("/health/ready", func(c echo.Context) error {
-		if !a.Ready(c.Request().Context()) {
-			status, code := health.Ready(errors.New("product-service is not ready"))
+		if !a.Ready(c.Request().Context()) || !authClient.Ready(c.Request().Context()) {
+			status, code := health.Ready(errors.New("a backend service is not ready"))
 			return c.JSON(code, status)
 		}
 		status, code := health.Ready(nil)
@@ -58,8 +60,30 @@ func New(rds *redis.Client, a *products.Client, cfg *config.Config, obsCfg obser
 	e.Use(otelecho.Middleware(obsCfg.Service, otelecho.WithSkipper(skipObservabilityRoute)))
 	e.Use(observability.EchoMiddleware(obsCfg, metrics))
 	e.Use(middleware.BodyLimit(fmt.Sprintf("%d", MaxUploadBytes)))
-	e.Use(middleware.CORS())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     cfg.CORSAllowedOrigins,
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, "X-Request-ID"},
+		AllowCredentials: true,
+	}))
 	e.Static("/images", ImagesDir)
+
+	authAPI := e.Group("/api/auth")
+	authAPI.POST("/register", h.Register)
+	authAPI.POST("/login", h.Login)
+	authAPI.POST("/refresh", h.Refresh)
+	authAPI.POST("/logout", h.Logout)
+	authProtected := authAPI.Group("", mw.RequireAuth(authClient))
+	authProtected.GET("/me", h.Me)
+	authProtected.PUT("/change-password", h.ChangePassword)
+	authProtected.PUT("/change-login", h.ChangeLogin)
+
+	cartAPI := e.Group("/api/cart", mw.RequireAuth(authClient))
+	cartAPI.GET("", h.GetCart)
+	cartAPI.DELETE("", h.ClearCart)
+	cartAPI.POST("/items", h.AddCartItem)
+	cartAPI.PUT("/items/:product_id", h.UpdateCartItem)
+	cartAPI.DELETE("/items/:product_id", h.RemoveCartItem)
 
 	userApi := e.Group("/api", mw.CheckId())
 	{
@@ -187,6 +211,7 @@ func New(rds *redis.Client, a *products.Client, cfg *config.Config, obsCfg obser
 		cfg:        cfg,
 		rds:        rds,
 		apiProduct: a,
+		apiAuth:    authClient,
 	}
 }
 

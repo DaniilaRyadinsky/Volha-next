@@ -16,6 +16,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.8.12
+	golang.org/x/crypto v0.54.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.70.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.70.0
 	go.opentelemetry.io/otel v1.45.0
@@ -71,7 +72,6 @@ require (
 	go.opentelemetry.io/otel/metric v1.45.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.40.0 // indirect

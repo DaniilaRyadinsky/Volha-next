@@ -1,5 +1,9 @@
 addr_products: "volha-product-service:8008"
+addr_auth: "volha-auth-service:8009"
 timeout: 10s
+cors_allowed_origins:
+  - "http://localhost:3000"
+cookie_secure: false
 port: 8080
 mode: "PROD"
 redis_addr: "volha-redis:6379"

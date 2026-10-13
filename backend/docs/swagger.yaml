@@ -1,5 +1,53 @@
 basePath: /
 definitions:
+  handlers.cartItemRequest:
+    properties:
+      product_id:
+        example: c61j5e0k4pc7j3n1k2g0
+        type: string
+      quantity:
+        example: 2
+        type: integer
+    type: object
+  handlers.changeLoginRequest:
+    properties:
+      new_login:
+        example: new_login
+        type: string
+      password:
+        example: StrongPassword123
+        type: string
+    type: object
+  handlers.changePasswordRequest:
+    properties:
+      new_password:
+        example: NewPassword123
+        type: string
+      old_password:
+        example: OldPassword123
+        type: string
+    type: object
+  handlers.loginRequest:
+    properties:
+      identifier:
+        example: user@example.com
+        type: string
+      password:
+        example: StrongPassword123
+        type: string
+    type: object
+  handlers.registerRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      login:
+        example: user_name
+        type: string
+      password:
+        example: StrongPassword123
+        type: string
+    type: object
   model.DictionariesByCategory:
     properties:
       brands:
@@ -41,9 +89,48 @@ definitions:
       min_width:
         type: integer
     type: object
+  productsRPC.AuthUser:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      login:
+        type: string
+    type: object
   productsRPC.Brand:
     properties:
       id:
+        type: string
+      title:
+        type: string
+    type: object
+  productsRPC.Cart:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/productsRPC.CartItem'
+        type: array
+      total_price:
+        type: integer
+      total_quantity:
+        type: integer
+    type: object
+  productsRPC.CartItem:
+    properties:
+      image:
+        type: string
+      line_total:
+        type: integer
+      price:
+        type: integer
+      pricesale:
+        type: integer
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      slug:
         type: string
       title:
         type: string
@@ -370,6 +457,177 @@ info:
   title: Volha gateway REST API
   version: "0.1"
 paths:
+  /api/auth/change-login:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Пароль и новый логин
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.changeLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.AuthUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Сменить логин
+      tags:
+      - auth
+  /api/auth/change-password:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Текущий и новый пароль
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.changePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.AuthUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Сменить пароль
+      tags:
+      - auth
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Access и refresh JWT устанавливаются в HttpOnly cookies и не возвращаются
+        в JSON.
+      parameters:
+      - description: Учетные данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.AuthUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Вход по логину или email
+      tags:
+      - auth
+  /api/auth/logout:
+    post:
+      description: Refresh-сессия отзывается, access и refresh cookies очищаются.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+      summary: Завершить сессию
+      tags:
+      - auth
+  /api/auth/me:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.AuthUser'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Текущий пользователь
+      tags:
+      - auth
+  /api/auth/refresh:
+    post:
+      description: Refresh token ротируется; новая пара JWT устанавливается в HttpOnly
+        cookies.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.AuthUser'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить пару JWT токенов
+      tags:
+      - auth
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Access и refresh JWT устанавливаются в HttpOnly cookies и не возвращаются
+        в JSON.
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.registerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/productsRPC.AuthUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Регистрация пользователя
+      tags:
+      - auth
   /api/brand:
     delete:
       description: Удаляет бренд по ID
@@ -508,6 +766,121 @@ paths:
       summary: Получить все бренды
       tags:
       - brands
+  /api/cart:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.Cart'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Очистить корзину
+      tags:
+      - cart
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.Cart'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Получить корзину пользователя
+      tags:
+      - cart
+  /api/cart/items:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Товар и количество
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.cartItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.Cart'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Добавить товар в корзину
+      tags:
+      - cart
+  /api/cart/items/{product_id}:
+    delete:
+      parameters:
+      - description: ID товара
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.Cart'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Удалить товар из корзины
+      tags:
+      - cart
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID товара
+        in: path
+        name: product_id
+        required: true
+        type: string
+      - description: Новое количество
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.cartItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productsRPC.Cart'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Изменить количество товара в корзине
+      tags:
+      - cart
   /api/category:
     delete:
       description: Удаляет категорию по ID

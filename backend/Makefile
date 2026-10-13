@@ -13,7 +13,7 @@ COMPOSE := docker compose -f ./build/volha/docker-compose.yml
 COMPOSE_OBSERVABILITY := docker compose -f ./build/volha/docker-compose.yml -f ./deployments/observability/docker-compose.yml
 COMPOSE_OBSERVABILITY_LINUX := docker compose -f ./build/volha/docker-compose.yml -f ./deployments/observability/docker-compose.yml -f ./deployments/observability/docker-compose.linux.yml --profile linux-host
 
-.PHONY: help format vet build run-gateway run-product-service generate generate-proto generate-swagger test test-race test-cover test-integration test-integration-compile test-all docker-build up down logs ps config up-observability down-observability logs-observability ps-observability config-observability up-observability-linux config-observability-linux migrate-up migrate-down
+.PHONY: help format vet build run-gateway run-product-service run-auth-service generate generate-proto generate-swagger test test-race test-cover test-integration test-integration-compile test-all docker-build up down logs ps config up-observability down-observability logs-observability ps-observability config-observability up-observability-linux config-observability-linux migrate-up migrate-down
 
 help:
 	@echo "Volha backend targets:"
@@ -22,6 +22,7 @@ help:
 	@echo "  build                          build all Go packages"
 	@echo "  run-gateway                    run gateway locally"
 	@echo "  run-product-service            run product service locally"
+	@echo "  run-auth-service               run auth service locally"
 	@echo "  generate                       regenerate proto and swagger"
 	@echo "  generate-proto                 regenerate protobuf Go code"
 	@echo "  generate-swagger               regenerate Swagger docs"
@@ -50,6 +51,9 @@ run-gateway:
 
 run-product-service:
 	go run ./cmd/product-service/app -config ./build/volha/configs/product-service.yaml
+
+run-auth-service:
+	go run ./cmd/auth-service -config ./build/volha/configs/auth-service.yaml
 
 generate: generate-proto generate-swagger
 
