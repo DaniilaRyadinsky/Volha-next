@@ -1,6 +1,0 @@
-services:
-  prometheus:
-    volumes:
-      - ../../deployments/observability/prometheus/prometheus-linux.yml:/etc/prometheus/prometheus.yml:ro
-      - ../../deployments/observability/prometheus/rules:/etc/prometheus/rules:ro
-      - prometheus-data:/prometheus

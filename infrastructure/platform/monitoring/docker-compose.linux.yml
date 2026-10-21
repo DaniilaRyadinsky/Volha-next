@@ -1,0 +1,7 @@
+# Paths are relative to compose.yaml at the repository root.
+services:
+  prometheus:
+    volumes:
+      - ./infrastructure/platform/monitoring/prometheus/prometheus-linux.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infrastructure/platform/monitoring/prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus-data:/prometheus

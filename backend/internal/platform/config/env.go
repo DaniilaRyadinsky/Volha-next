@@ -10,6 +10,8 @@ import (
 
 func LoadDotEnv() {
 	_ = godotenv.Load()
+	// Local Go commands run from backend; the shared .env lives at the repository root.
+	_ = godotenv.Load("../.env")
 }
 
 func StringFromEnv(name string, current string) string {

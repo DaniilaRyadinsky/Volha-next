@@ -10,9 +10,7 @@ tmp/
 coverage/
 *.cover
 *.out
-build/volha/bin/
-build/volha/dumps/
-build/volha/images/
+bin/
 dumps/
 images/
 testhtml/

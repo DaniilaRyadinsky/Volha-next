@@ -156,7 +156,7 @@ func (c migrationConfig) connStr() string {
 func migrationsSourceURL() string {
 	path := os.Getenv("MIGRATIONS_PATH")
 	if path == "" {
-		path = filepath.Join("build", "volha", "migrations")
+		path = "migrations"
 	}
 	abs, err := filepath.Abs(path)
 	if err != nil {
