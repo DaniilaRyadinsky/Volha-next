@@ -125,11 +125,12 @@ LABEL org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.created="${BUILD_TIME}" \
       org.opencontainers.image.title="volha-gateway"
 WORKDIR /app
-RUN addgroup -S volha && adduser -S volha -G volha && mkdir -p /app/configs /app/images && chown -R volha:volha /app
+RUN addgroup -S volha && adduser -S volha -G volha && mkdir -p /app/configs /app/images /app/pdfs && chown -R volha:volha /app
 COPY --from=gateway-builder /app/volha-gateway /app/volha-gateway
 
 VOLUME /app/configs
 VOLUME /app/images
+VOLUME /app/pdfs
 USER volha
 
 EXPOSE 8080

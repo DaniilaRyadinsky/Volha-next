@@ -200,7 +200,10 @@ SELECT
 	p.price,
 	COALESCE(p.photos[1], ''),
 	p.pricesale,
-	p.is_featured
+	p.is_featured,
+ cat.id, cat.slug, cat.title, cat.description,
+ (SELECT COUNT(*)::int FROM products cp WHERE cp.category_id = cat.id), cat.img,
+ p.photos
 FROM products p
 JOIN categories cat ON cat.id = p.category_id
 `

@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/autumnterror/volha-backend/internal/product-service/domain"
+
 	productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 	"github.com/autumnterror/volha-backend/internal/gateway/net/view"
 	"github.com/labstack/echo/v4"
@@ -15,7 +17,7 @@ import (
 // @Tags slide
 // @Accept json
 // @Produce json
-// @Param material body productsRPC.Slide true "Новый слайд"
+// @Param material body domain.Slide true "Новый слайд"
 // @Success 200 {object} view.IDResponse "успех"
 // @Failure 400 {object} view.ErrorResponse "неправильный ввод"
 // @Failure 409 {object} view.ErrorResponse "уже существует"
@@ -27,10 +29,12 @@ func (a *Apis) CreateSlide(c echo.Context) error {
 	ctx, cancel := requestContext(c)
 	defer cancel()
 
+	var body domain.Slide
 	var s productsRPC.Slide
-	if err := c.Bind(&s); err != nil {
+	if err := c.Bind(&body); err != nil {
 		return c.JSON(http.StatusBadRequest, view.ErrorResponse{Error: "bad JSON"})
 	}
+	s = *domain.SlideToRpc(&body)
 	s.Id = xid.New().String()
 	if err := ensureImageReferences(s.GetImg(), s.GetImg762()); err != nil {
 		code, swg := imageReferenceErrorResponse(ctx, op, err)
@@ -49,7 +53,7 @@ func (a *Apis) CreateSlide(c echo.Context) error {
 // @Tags slide
 // @Accept json
 // @Produce json
-// @Param material body productsRPC.Slide true "Обновлённые данные слайда"
+// @Param material body domain.Slide true "Обновлённые данные слайда"
 // @Success 200 {object} view.MessageResponse "успех"
 // @Failure 400 {object} view.ErrorResponse "неправильный ввод"
 // @Failure 404 {object} view.ErrorResponse "не найдено"
@@ -61,10 +65,12 @@ func (a *Apis) UpdateSlide(c echo.Context) error {
 	ctx, cancel := requestContext(c)
 	defer cancel()
 
+	var body domain.Slide
 	var s productsRPC.Slide
-	if err := c.Bind(&s); err != nil {
+	if err := c.Bind(&body); err != nil {
 		return c.JSON(http.StatusBadRequest, view.ErrorResponse{Error: "bad JSON"})
 	}
+	s = *domain.SlideToRpc(&body)
 	if err := ensureImageReferences(s.GetImg(), s.GetImg762()); err != nil {
 		code, swg := imageReferenceErrorResponse(ctx, op, err)
 		return c.JSON(code, swg)
@@ -131,7 +137,7 @@ func (a *Apis) DeleteSlide(c echo.Context) error {
 // @Description Возвращает список всех слайдов
 // @Tags slide
 // @Produce json
-// @Success 200 {object} []productsRPC.Slide "успех"
+// @Success 200 {object} []domain.Slide "успех"
 // @Failure 502 {object} view.ErrorResponse "ошибка в микросервисе"
 // @Router /api/slide/all [get]
 func (a *Apis) GetAllSlides(c echo.Context) error {
@@ -146,9 +152,9 @@ func (a *Apis) GetAllSlides(c echo.Context) error {
 		return c.JSON(code, swg)
 	}
 	if len(list.GetItems()) == 0 {
-		return c.JSON(http.StatusOK, []*productsRPC.Slide{})
+		return c.JSON(http.StatusOK, []*domain.Slide{})
 	}
-	return c.JSON(http.StatusOK, list.GetItems())
+	return c.JSON(http.StatusOK, domain.SlidesFromRpc(list.GetItems()))
 }
 
 // GetSlide rand godoc
@@ -157,7 +163,7 @@ func (a *Apis) GetAllSlides(c echo.Context) error {
 // @Tags slide
 // @Produce json
 // @Param id query string true "ID слайд"
-// @Success 200 {object} productsRPC.Slide "успех"
+// @Success 200 {object} domain.Slide "успех"
 // @Failure 502 {object} view.ErrorResponse "ошибка в микросервисе"
 // @Router /api/slide [get]
 func (a *Apis) GetSlide(c echo.Context) error {
@@ -175,5 +181,5 @@ func (a *Apis) GetSlide(c echo.Context) error {
 		code, swg := a.mapGRPCError(ctx, op, err)
 		return c.JSON(code, swg)
 	}
-	return c.JSON(http.StatusOK, slide)
+	return c.JSON(http.StatusOK, domain.SlideFromRpc(slide))
 }

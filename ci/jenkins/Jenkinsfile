@@ -1,0 +1,78 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        timeout(time: 90, unit: 'MINUTES')
+        disableConcurrentBuilds()
+        skipDefaultCheckout(true)
+    }
+
+    parameters {
+        booleanParam(name: 'PUBLISH_IMAGES', defaultValue: false,
+            description: 'After every quality gate passes, push backend images to local Nexus.')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                sh 'bash ci/jenkins/run.sh prepare'
+            }
+        }
+        stage('Build backend') {
+            steps { sh 'bash ci/jenkins/run.sh backend-build' }
+        }
+        stage('Build frontend') {
+            steps { sh 'bash ci/jenkins/run.sh frontend-build' }
+        }
+        stage('Go unit tests') {
+            steps { sh 'bash ci/jenkins/run.sh unit-tests' }
+        }
+        stage('Static checks') {
+            steps { sh 'bash ci/jenkins/run.sh vet' }
+        }
+        stage('SonarQube quality gate') {
+            steps {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh 'bash ci/jenkins/run.sh sonar'
+                }
+            }
+        }
+        stage('Open-source dependency security') {
+            steps {
+                sh 'bash ci/jenkins/run.sh govulncheck'
+                sh 'bash ci/jenkins/run.sh osv'
+            }
+        }
+        stage('Source security') {
+            steps {
+                sh 'bash ci/jenkins/run.sh gosec'
+                sh 'bash ci/jenkins/run.sh semgrep'
+                sh 'bash ci/jenkins/run.sh gitleaks'
+            }
+        }
+        stage('Build and scan backend images') {
+            steps {
+                sh 'bash ci/jenkins/run.sh docker-build'
+                sh 'bash ci/jenkins/run.sh trivy'
+            }
+        }
+        stage('Publish to Nexus') {
+            when { expression { return params.PUBLISH_IMAGES } }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus-docker',
+                    usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
+                    sh 'bash ci/jenkins/run.sh publish'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            junit allowEmptyResults: true, testResults: 'ci-reports/unit.xml'
+            archiveArtifacts allowEmptyArchive: true, artifacts: 'ci-reports/**', fingerprint: true
+        }
+    }
+}

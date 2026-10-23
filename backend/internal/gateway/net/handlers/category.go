@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/autumnterror/volha-backend/internal/product-service/domain"
+
 	productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 	"github.com/autumnterror/volha-backend/internal/gateway/net/view"
 	"github.com/labstack/echo/v4"
@@ -130,7 +132,7 @@ func (a *Apis) DeleteCategory(c echo.Context) error {
 // @Description Возвращает список всех категорий
 // @Tags category
 // @Produce json
-// @Success 200 {object} []productsRPC.Category "успех"
+// @Success 200 {object} []domain.Category "успех"
 // @Failure 502 {object} view.ErrorResponse "ошибка в микросервисе"
 // @Router /api/category/all [get]
 func (a *Apis) GetAllCategories(c echo.Context) error {
@@ -145,9 +147,9 @@ func (a *Apis) GetAllCategories(c echo.Context) error {
 		return c.JSON(code, swg)
 	}
 	if len(list.GetItems()) == 0 {
-		return c.JSON(http.StatusOK, []*productsRPC.Category{})
+		return c.JSON(http.StatusOK, []*domain.Category{})
 	}
-	return c.JSON(http.StatusOK, list.GetItems())
+	return c.JSON(http.StatusOK, domain.CategoriesFromRpc(list.GetItems()))
 }
 
 // GetCategory godoc
@@ -156,7 +158,7 @@ func (a *Apis) GetAllCategories(c echo.Context) error {
 // @Tags category
 // @Produce json
 // @Param id query string true "ID категории"
-// @Success 200 {object} productsRPC.Category "успех"
+// @Success 200 {object} domain.Category "успех"
 // @Failure 502 {object} view.ErrorResponse "ошибка в микросервисе"
 // @Router /api/category [get]
 func (a *Apis) GetCategory(c echo.Context) error {
@@ -174,5 +176,5 @@ func (a *Apis) GetCategory(c echo.Context) error {
 		code, swg := a.mapGRPCError(ctx, op, err)
 		return c.JSON(code, swg)
 	}
-	return c.JSON(http.StatusOK, category)
+	return c.JSON(http.StatusOK, domain.CategoryFromRpc(category))
 }

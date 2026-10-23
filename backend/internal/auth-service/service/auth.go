@@ -17,7 +17,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/autumnterror/volha-backend/internal/auth-service/domain"
-	"github.com/autumnterror/volha-backend/internal/auth-service/repository"
 	"github.com/rs/xid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -27,7 +26,7 @@ const tokenIssuer = "volha-auth-service"
 var loginPattern = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{2,31}$`)
 
 type Service struct {
-	store      *repository.Store
+	store      Store
 	secret     []byte
 	accessTTL  time.Duration
 	refreshTTL time.Duration
@@ -56,7 +55,7 @@ type claims struct {
 	ExpiresAt int64  `json:"exp"`
 }
 
-func New(store *repository.Store, secret string, accessTTL, refreshTTL time.Duration) *Service {
+func New(store Store, secret string, accessTTL, refreshTTL time.Duration) *Service {
 	return &Service{
 		store:      store,
 		secret:     []byte(secret),

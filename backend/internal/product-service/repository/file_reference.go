@@ -21,6 +21,8 @@ SELECT EXISTS (
 	SELECT 1 FROM product_color_photos WHERE $1 = ANY(photos)
 	UNION ALL
 	SELECT 1 FROM slides WHERE img = $1 OR img762 = $1
+ UNION ALL
+ SELECT 1 FROM articles WHERE $1 = ANY(img) OR pdf = $1 OR pdf = '/pdfs/' || $1
 )`
 
 	var referenced bool

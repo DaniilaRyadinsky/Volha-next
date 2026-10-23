@@ -4,15 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/autumnterror/volha-backend/api/proto/gen"
+
+	productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 	"github.com/autumnterror/volha-backend/internal/gateway/model"
 	"github.com/autumnterror/volha-backend/internal/platform/format"
 
-	"github.com/redis/go-redis/v9"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
-const cacheKey = "dictionaries:all"
+const cacheKey = "dictionaries:all:gateway-v2"
 const cacheGenerationKey = "dictionaries:generation"
 
 var ErrCacheMiss = errors.New("cache miss")

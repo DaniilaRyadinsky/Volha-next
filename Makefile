@@ -13,7 +13,7 @@ COMPOSE := docker compose -f ./compose.yaml
 COMPOSE_OBSERVABILITY := $(COMPOSE) -f ./infrastructure/platform/monitoring/docker-compose.yml
 COMPOSE_OBSERVABILITY_LINUX := $(COMPOSE_OBSERVABILITY) -f ./infrastructure/platform/monitoring/docker-compose.linux.yml --profile linux-host
 
-.PHONY: help format vet build run-gateway run-product-service run-auth-service generate generate-proto generate-swagger test test-race test-cover test-integration test-integration-compile test-all docker-build up down logs ps config up-observability down-observability logs-observability ps-observability config-observability up-observability-linux config-observability-linux migrate-up migrate-down
+.PHONY: help format vet build run-gateway run-product-service run-auth-service generate generate-proto generate-swagger test test-race test-cover test-integration test-integration-compile test-e2e test-regression test-all docker-build up down logs ps config up-observability down-observability logs-observability ps-observability config-observability up-observability-linux config-observability-linux migrate-up migrate-down
 
 help:
 	@echo "Volha targets (run from the repository root):"
@@ -31,6 +31,8 @@ help:
 	@echo "  test-cover                     run Go tests with coverage"
 	@echo "  test-integration               run integration tests"
 	@echo "  test-integration-compile       compile integration tests only"
+	@echo "  test-e2e                       run HTTP user journeys"
+	@echo "  test-regression                run targeted regressions"
 	@echo "  test-all                       run unit and integration tests"
 	@echo "  docker-build                   build Docker images"
 	@echo "  up/down/logs/ps/config         manage base Compose stack"
@@ -61,7 +63,7 @@ generate-proto:
 	docker run --rm -v "$(CURDIR)/backend:/workspace" -w /workspace bufbuild/buf:1.50.0 generate api/proto/filez --template '{"version":"v2","plugins":[{"remote":"buf.build/protocolbuffers/go:v1.36.10","out":"api/proto/gen","opt":["paths=source_relative"]},{"remote":"buf.build/grpc/go:v1.5.1","out":"api/proto/gen","opt":["paths=source_relative"]}]}'
 
 generate-swagger:
-	cd backend && swag init --dir ./cmd/gateway,./internal/gateway/net/handlers,./internal/gateway/net/view,./internal/gateway/model,./api/proto/gen --output ./docs
+	cd backend && swag init --dir ./cmd/gateway,./internal/gateway/net/handlers,./internal/gateway/net/view,./internal/gateway/model,./internal/product-service/domain,./api/proto/gen --output ./docs
 
 test:
 	go -C backend test ./...
@@ -73,10 +75,16 @@ test-cover:
 	go -C backend test -cover ./...
 
 test-integration:
-	go -C backend test -tags=integration ./test/integration/...
+	go -C backend test -tags=integration -count=1 ./test/integration/...
 
 test-integration-compile:
 	go -C backend test -tags=integration ./test/integration/... -run "^$$"
+
+test-e2e:
+	go -C backend test -tags=integration -count=1 ./test/integration/e2e -run "^TestE2E"
+
+test-regression:
+	go -C backend test -tags=integration -count=1 ./test/integration/e2e -run "^TestRegression"
 
 test-all: test test-integration
 

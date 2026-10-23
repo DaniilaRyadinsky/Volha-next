@@ -32,6 +32,8 @@ message ProductCatalogItem {
   string image = 6;
   int32 pricesale = 7;
   bool isFeatured = 8;
+  Category category_details = 9;
+  repeated string photos = 10;
 }
 
 message ProductCatalogList {
@@ -214,3 +216,18 @@ message Slide {
 }
 
 
+
+message Article {
+  string id = 1;
+  string slug = 2;
+  string title = 3;
+  repeated string img = 4;
+  string text = 5;
+  int64 creation_time = 6;
+}
+message ArticleList {
+  repeated Article items = 1;
+  int32 total = 2;
+  int32 offset = 3;
+  int32 limit = 4;
+}

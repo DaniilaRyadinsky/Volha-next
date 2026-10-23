@@ -1,5 +1,273 @@
 basePath: /
 definitions:
+  domain.Article:
+    properties:
+      creationTime:
+        type: integer
+      id:
+        type: string
+      img:
+        items:
+          type: string
+        type: array
+      slug:
+        type: string
+      text:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.Brand:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.Category:
+    properties:
+      count:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      img:
+        type: string
+      slug:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.Color:
+    properties:
+      hex:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.Country:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.Dictionaries:
+    properties:
+      brands:
+        items:
+          $ref: '#/definitions/domain.Brand'
+        type: array
+      categories:
+        items:
+          $ref: '#/definitions/domain.Category'
+        type: array
+      colors:
+        items:
+          $ref: '#/definitions/domain.Color'
+        type: array
+      countries:
+        items:
+          $ref: '#/definitions/domain.Country'
+        type: array
+      materials:
+        items:
+          $ref: '#/definitions/domain.Material'
+        type: array
+      maxDepth:
+        type: integer
+      maxHeight:
+        type: integer
+      maxPrice:
+        type: integer
+      maxWidth:
+        type: integer
+      minDepth:
+        type: integer
+      minHeight:
+        type: integer
+      minPrice:
+        type: integer
+      minWidth:
+        type: integer
+    type: object
+  domain.Material:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.Product:
+    properties:
+      brand:
+        $ref: '#/definitions/domain.Brand'
+      category:
+        $ref: '#/definitions/domain.Category'
+      colors:
+        items:
+          $ref: '#/definitions/domain.Color'
+        type: array
+      country:
+        $ref: '#/definitions/domain.Country'
+      depth:
+        type: integer
+      description:
+        type: string
+      height:
+        type: integer
+      id:
+        type: string
+      materials:
+        items:
+          $ref: '#/definitions/domain.Material'
+        type: array
+      price:
+        type: integer
+      similarProducts:
+        items:
+          $ref: '#/definitions/domain.Product'
+        type: array
+      sku:
+        type: string
+      slug:
+        type: string
+      title:
+        type: string
+      width:
+        type: integer
+    type: object
+  domain.ProductFilter:
+    properties:
+      brand:
+        items:
+          type: string
+        type: array
+      category:
+        items:
+          type: string
+        type: array
+      colors:
+        items:
+          type: string
+        type: array
+      country:
+        items:
+          type: string
+        type: array
+      limit:
+        type: integer
+      materials:
+        items:
+          type: string
+        type: array
+      maxDepth:
+        type: integer
+      maxHeight:
+        type: integer
+      maxPrice:
+        type: integer
+      maxWidth:
+        type: integer
+      minDepth:
+        type: integer
+      minHeight:
+        type: integer
+      minPrice:
+        type: integer
+      minWidth:
+        type: integer
+      page:
+        type: integer
+      search:
+        type: string
+      sortBy:
+        type: string
+      sortOrder:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.ProductId:
+    properties:
+      brand:
+        type: string
+      category:
+        type: string
+      colors:
+        items:
+          type: string
+        type: array
+      country:
+        type: string
+      depth:
+        type: integer
+      description:
+        type: string
+      height:
+        type: integer
+      id:
+        type: string
+      isFeatured:
+        type: boolean
+      materials:
+        items:
+          type: string
+        type: array
+      photos:
+        items:
+          type: string
+        type: array
+      price:
+        type: integer
+      pricesale:
+        type: integer
+      similarProducts:
+        items:
+          type: string
+        type: array
+      sku:
+        type: string
+      slug:
+        type: string
+      title:
+        type: string
+      width:
+        type: integer
+    type: object
+  domain.Slide:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      img:
+        type: string
+      img762:
+        type: string
+      link:
+        type: string
+      subtitle:
+        type: string
+      title:
+        type: string
+    type: object
+  handlers.ArticleList:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/domain.Article'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
   handlers.cartItemRequest:
     properties:
       product_id:
@@ -47,47 +315,6 @@ definitions:
       password:
         example: StrongPassword123
         type: string
-    type: object
-  model.DictionariesByCategory:
-    properties:
-      brands:
-        items:
-          $ref: '#/definitions/productsRPC.Brand'
-        type: array
-      categories:
-        items:
-          $ref: '#/definitions/productsRPC.Category'
-        type: array
-      colors:
-        items:
-          $ref: '#/definitions/productsRPC.Color'
-        type: array
-      countries:
-        items:
-          $ref: '#/definitions/productsRPC.Country'
-        type: array
-      filtered_category:
-        type: string
-      materials:
-        items:
-          $ref: '#/definitions/productsRPC.Material'
-        type: array
-      max_depth:
-        type: integer
-      max_height:
-        type: integer
-      max_price:
-        type: integer
-      max_width:
-        type: integer
-      min_depth:
-        type: integer
-      min_height:
-        type: integer
-      min_price:
-        type: integer
-      min_width:
-        type: integer
     type: object
   productsRPC.AuthUser:
     properties:
@@ -168,98 +395,12 @@ definitions:
       title:
         type: string
     type: object
-  productsRPC.Dictionaries:
-    properties:
-      brands:
-        items:
-          $ref: '#/definitions/productsRPC.Brand'
-        type: array
-      categories:
-        items:
-          $ref: '#/definitions/productsRPC.Category'
-        type: array
-      colors:
-        items:
-          $ref: '#/definitions/productsRPC.Color'
-        type: array
-      countries:
-        items:
-          $ref: '#/definitions/productsRPC.Country'
-        type: array
-      materials:
-        items:
-          $ref: '#/definitions/productsRPC.Material'
-        type: array
-      max_depth:
-        type: integer
-      max_height:
-        type: integer
-      max_price:
-        type: integer
-      max_width:
-        type: integer
-      min_depth:
-        type: integer
-      min_height:
-        type: integer
-      min_price:
-        type: integer
-      min_width:
-        type: integer
-    type: object
   productsRPC.Material:
     properties:
       id:
         type: string
       title:
         type: string
-    type: object
-  productsRPC.Product:
-    properties:
-      article:
-        type: string
-      brand:
-        $ref: '#/definitions/productsRPC.Brand'
-      category:
-        $ref: '#/definitions/productsRPC.Category'
-      colors:
-        items:
-          $ref: '#/definitions/productsRPC.Color'
-        type: array
-      country:
-        $ref: '#/definitions/productsRPC.Country'
-      depth:
-        type: integer
-      description:
-        type: string
-      height:
-        type: integer
-      id:
-        type: string
-      isFeatured:
-        type: boolean
-      materials:
-        items:
-          $ref: '#/definitions/productsRPC.Material'
-        type: array
-      photos:
-        items:
-          type: string
-        type: array
-      price:
-        type: integer
-      pricesale:
-        type: integer
-      seems:
-        items:
-          $ref: '#/definitions/productsRPC.Product'
-        type: array
-      slug:
-        type: string
-      title:
-        type: string
-      width:
-        type: integer
     type: object
   productsRPC.ProductColorPhotos:
     properties:
@@ -277,119 +418,6 @@ definitions:
       color_id:
         type: string
       product_id:
-        type: string
-    type: object
-  productsRPC.ProductFilter:
-    properties:
-      brand:
-        items:
-          type: string
-        type: array
-      category:
-        items:
-          type: string
-        type: array
-      colors:
-        items:
-          type: string
-        type: array
-      country:
-        items:
-          type: string
-        type: array
-      limit:
-        type: integer
-      materials:
-        items:
-          type: string
-        type: array
-      max_depth:
-        type: integer
-      max_height:
-        type: integer
-      max_price:
-        type: integer
-      max_width:
-        type: integer
-      min_depth:
-        type: integer
-      min_height:
-        type: integer
-      min_price:
-        type: integer
-      min_width:
-        type: integer
-      offset:
-        type: integer
-      sort_by:
-        type: string
-      sort_order:
-        type: string
-      title:
-        type: string
-    type: object
-  productsRPC.ProductId:
-    properties:
-      article:
-        type: string
-      brand:
-        type: string
-      category:
-        type: string
-      colors:
-        items:
-          type: string
-        type: array
-      country:
-        type: string
-      depth:
-        type: integer
-      description:
-        type: string
-      height:
-        type: integer
-      id:
-        type: string
-      isFeatured:
-        type: boolean
-      materials:
-        items:
-          type: string
-        type: array
-      photos:
-        items:
-          type: string
-        type: array
-      price:
-        type: integer
-      pricesale:
-        type: integer
-      seems:
-        items:
-          type: string
-        type: array
-      slug:
-        type: string
-      title:
-        type: string
-      width:
-        type: integer
-    type: object
-  productsRPC.Slide:
-    properties:
-      badge:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      img:
-        type: string
-      img762:
-        type: string
-      link:
-        type: string
-      title:
         type: string
     type: object
   view.ErrorResponse:
@@ -419,16 +447,14 @@ definitions:
   view.ProductCatalogItem:
     properties:
       category:
-        type: string
+        $ref: '#/definitions/domain.Category'
       id:
         type: string
-      image:
-        type: string
-      isFeatured:
-        type: boolean
+      photos:
+        items:
+          type: string
+        type: array
       price:
-        type: integer
-      pricesale:
         type: integer
       slug:
         type: string
@@ -443,7 +469,7 @@ definitions:
         type: array
       limit:
         type: integer
-      offset:
+      page:
         type: integer
       total:
         type: integer
@@ -457,6 +483,110 @@ info:
   title: Volha gateway REST API
   version: "0.1"
 paths:
+  /api/article:
+    delete:
+      parameters:
+      - description: ID статьи
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+      summary: Удалить статью и неиспользуемые файлы
+      tags:
+      - articles
+    get:
+      parameters:
+      - description: ID статьи
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Article'
+      summary: Получить статью
+      tags:
+      - articles
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Статья; text содержит /pdfs/filename.pdf
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Article'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/view.IDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Создать статью со ссылкой на загруженный PDF
+      tags:
+      - articles
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Статья
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Article'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/view.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorResponse'
+      summary: Обновить статью, сохранив время создания
+      tags:
+      - articles
+  /api/article/all:
+    get:
+      parameters:
+      - description: Страница с 1
+        in: query
+        name: page
+        type: integer
+      - description: Размер страницы, от 1 до 100
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ArticleList'
+      summary: Получить список статей
+      tags:
+      - articles
   /api/auth/change-login:
     put:
       consumes:
@@ -673,7 +803,7 @@ paths:
         "200":
           description: успех
           schema:
-            $ref: '#/definitions/productsRPC.Brand'
+            $ref: '#/definitions/domain.Brand'
         "502":
           description: ошибка в микросервисе
           schema:
@@ -757,7 +887,7 @@ paths:
           description: успех
           schema:
             items:
-              $ref: '#/definitions/productsRPC.Brand'
+              $ref: '#/definitions/domain.Brand'
             type: array
         "502":
           description: ошибка в микросервисе
@@ -926,7 +1056,7 @@ paths:
         "200":
           description: успех
           schema:
-            $ref: '#/definitions/productsRPC.Category'
+            $ref: '#/definitions/domain.Category'
         "502":
           description: ошибка в микросервисе
           schema:
@@ -1010,7 +1140,7 @@ paths:
           description: успех
           schema:
             items:
-              $ref: '#/definitions/productsRPC.Category'
+              $ref: '#/definitions/domain.Category'
             type: array
         "502":
           description: ошибка в микросервисе
@@ -1064,7 +1194,7 @@ paths:
         "200":
           description: успех
           schema:
-            $ref: '#/definitions/productsRPC.Color'
+            $ref: '#/definitions/domain.Color'
         "502":
           description: ошибка в микросервисе
           schema:
@@ -1148,7 +1278,7 @@ paths:
           description: успех
           schema:
             items:
-              $ref: '#/definitions/productsRPC.Color'
+              $ref: '#/definitions/domain.Color'
             type: array
         "502":
           description: ошибка в микросервисе
@@ -1361,7 +1491,7 @@ paths:
         "200":
           description: успех
           schema:
-            $ref: '#/definitions/productsRPC.Country'
+            $ref: '#/definitions/domain.Country'
         "502":
           description: ошибка в микросервисе
           schema:
@@ -1445,7 +1575,7 @@ paths:
           description: успех
           schema:
             items:
-              $ref: '#/definitions/productsRPC.Country'
+              $ref: '#/definitions/domain.Country'
             type: array
         "502":
           description: ошибка в микросервисе
@@ -1464,7 +1594,7 @@ paths:
         "200":
           description: Успешный запрос
           schema:
-            $ref: '#/definitions/productsRPC.Dictionaries'
+            $ref: '#/definitions/domain.Dictionaries'
         "400":
           description: Ошибка на сервере
           schema:
@@ -1492,7 +1622,7 @@ paths:
         "200":
           description: Успешный запрос
           schema:
-            $ref: '#/definitions/model.DictionariesByCategory'
+            $ref: '#/definitions/domain.Dictionaries'
         "400":
           description: Ошибка на сервере
           schema:
@@ -1605,7 +1735,7 @@ paths:
         "200":
           description: успех
           schema:
-            $ref: '#/definitions/productsRPC.Material'
+            $ref: '#/definitions/domain.Material'
         "502":
           description: ошибка в микросервисе
           schema:
@@ -1689,7 +1819,7 @@ paths:
           description: успех
           schema:
             items:
-              $ref: '#/definitions/productsRPC.Material'
+              $ref: '#/definitions/domain.Material'
             type: array
         "502":
           description: ошибка в микросервисе
@@ -1743,7 +1873,7 @@ paths:
         "200":
           description: успех
           schema:
-            $ref: '#/definitions/productsRPC.Product'
+            $ref: '#/definitions/domain.Product'
         "502":
           description: ошибка в микросервисе
           schema:
@@ -1761,7 +1891,7 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/productsRPC.ProductId'
+          $ref: '#/definitions/domain.ProductId'
       produces:
       - application/json
       responses:
@@ -1794,7 +1924,7 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/productsRPC.ProductId'
+          $ref: '#/definitions/domain.ProductId'
       produces:
       - application/json
       responses:
@@ -1821,10 +1951,9 @@ paths:
     get:
       description: Возвращает список всех продуктов
       parameters:
-      - description: offset >= 0
+      - description: Page starting at 1
         in: query
-        name: offset
-        required: true
+        name: page
         type: integer
       - description: limit > 0
         in: query
@@ -1837,9 +1966,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/productsRPC.Product'
-            type: array
+            $ref: '#/definitions/view.ProductCatalogList'
         "400":
           description: Bad Request
           schema:
@@ -1863,7 +1990,7 @@ paths:
         name: filter
         required: true
         schema:
-          $ref: '#/definitions/productsRPC.ProductFilter'
+          $ref: '#/definitions/domain.ProductFilter'
       produces:
       - application/json
       responses:
@@ -1927,7 +2054,7 @@ paths:
         "200":
           description: успех
           schema:
-            $ref: '#/definitions/productsRPC.Slide'
+            $ref: '#/definitions/domain.Slide'
         "502":
           description: ошибка в микросервисе
           schema:
@@ -1945,7 +2072,7 @@ paths:
         name: material
         required: true
         schema:
-          $ref: '#/definitions/productsRPC.Slide'
+          $ref: '#/definitions/domain.Slide'
       produces:
       - application/json
       responses:
@@ -1978,7 +2105,7 @@ paths:
         name: material
         required: true
         schema:
-          $ref: '#/definitions/productsRPC.Slide'
+          $ref: '#/definitions/domain.Slide'
       produces:
       - application/json
       responses:
@@ -2011,7 +2138,7 @@ paths:
           description: успех
           schema:
             items:
-              $ref: '#/definitions/productsRPC.Slide'
+              $ref: '#/definitions/domain.Slide'
             type: array
         "502":
           description: ошибка в микросервисе

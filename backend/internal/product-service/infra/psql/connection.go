@@ -15,10 +15,12 @@ type PostgresDb struct {
 }
 
 // NewConnect is constructor of PostgresDb. Construct with connection
-func NewConnect(cfg *config.Config) (*PostgresDb, error) {
+func NewConnect(cfg *config.Config) (*PostgresDb, error) { return connect(cfg, sql.Open) }
+
+func connect(cfg *config.Config, openDB func(string, string) (*sql.DB, error)) (*PostgresDb, error) {
 	const op = "psql.NewConnect"
 
-	db, err := sql.Open("postgres", cfg.ConnStr)
+	db, err := openDB("postgres", cfg.ConnStr)
 	if err != nil {
 		return nil, format.Error(op, err)
 	}

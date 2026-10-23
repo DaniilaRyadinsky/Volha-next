@@ -7,8 +7,8 @@ Furniture catalog with a Go backend and frontend applications in a pnpm workspac
 ```text
 backend/          Go services, protobuf, service configs, migrations and Go tests
 frontend/         Frontend applications and shared packages
-.github/          GitHub configuration (reserved)
-ci/               CI configuration (reserved)
+.github/          GitHub Actions
+ci/               Jenkins CI configuration
 deploy/           Application deployment (reserved)
 infrastructure/   Platform services; monitoring lives in platform/monitoring
 ops/              Operational data; local database dumps live in database/dumps
@@ -52,8 +52,12 @@ make up
 - `make test`
 - `make test-race`
 - `make test-integration-compile`
+- `make test-integration` (PostgreSQL + Redis)
+- `make test-e2e` / `make test-regression` (PostgreSQL)
 
-Integration tests require PostgreSQL/Redis and live under `backend/test/integration`. They are not run by the default `make test`.
+Integration, E2E and regression tests live under `backend/test/integration`; setup and coverage are described in [their README](backend/test/integration/README.md). They are not run by the default `make test`.
+
+The GitHub Actions and local Jenkins quality gates are described in [docs/CI-CD.md](docs/CI-CD.md). Integration tests are planned for a separate CDL pipeline.
 
 `make up` builds the base Docker stack, waits for PostgreSQL health, runs migrations through `volha-migrator`, and only then starts `volha-product-service` and `volha-gateway`.
 

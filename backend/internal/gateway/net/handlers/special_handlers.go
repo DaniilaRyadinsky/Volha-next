@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/autumnterror/volha-backend/internal/product-service/domain"
+
 	productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 
 	"github.com/autumnterror/volha-backend/internal/gateway/model"
@@ -56,7 +58,7 @@ func (a *Apis) GetPhotosByProductAndColor(c echo.Context) error {
 // @Tags dictionaries
 // @Produce json
 // @Param id query string true "ID категории"
-// @Success 200 {object} model.DictionariesByCategory "Успешный запрос"
+// @Success 200 {object} domain.Dictionaries "Успешный запрос"
 // @Failure 400 {object} view.ErrorResponse "Ошибка на сервере"
 // @Failure 502 {object} view.ErrorResponse "Ошибка взаимодействия с сервисом"
 // @Router /api/dictionaries/all/by-category [get]
@@ -69,7 +71,7 @@ func (a *Apis) GetAllDictionariesByCategory(c echo.Context) error {
 	}
 
 	if ds, err := a.rds.GetDictionariesByCategory(c.Request().Context(), id); err == nil {
-		return c.JSON(http.StatusOK, ds)
+		return c.JSON(http.StatusOK, dictionaryByCategoryView(ds))
 	} else if !errors.Is(err, redis.ErrCacheMiss) {
 		log.Error(c.Request().Context(), "get dictionaries by category cache failed", "operation", op, "error", err)
 	}
@@ -116,7 +118,7 @@ func (a *Apis) GetAllDictionariesByCategory(c echo.Context) error {
 		log.Error(ctx, "set dictionaries by category cache failed", "operation", op, "error", err)
 	}
 
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, dictionaryByCategoryView(&response))
 }
 
 func filteredCategoryTitle(categories []*productsRPC.Category, id string) string {
@@ -133,7 +135,7 @@ func filteredCategoryTitle(categories []*productsRPC.Category, id string) string
 // @Description Возвращает список всех доступных справочных данных: бренды, категории, материалы, страны и цвета
 // @Tags dictionaries
 // @Produce json
-// @Success 200 {object} productsRPC.Dictionaries "Успешный запрос"
+// @Success 200 {object} domain.Dictionaries "Успешный запрос"
 // @Failure 400 {object} view.ErrorResponse "Ошибка на сервере"
 // @Failure 502 {object} view.ErrorResponse "Ошибка взаимодействия с сервисом"
 // @Router /api/dictionaries/all [get]
@@ -141,7 +143,7 @@ func (a *Apis) GetAllDictionaries(c echo.Context) error {
 	const op = "handlers.GetAllDictionaries"
 
 	if ds, err := a.rds.GetDictionaries(c.Request().Context()); err == nil {
-		return c.JSON(http.StatusOK, ds)
+		return c.JSON(http.StatusOK, domain.DictionariesFromRpc(ds))
 	} else if !errors.Is(err, redis.ErrCacheMiss) {
 		log.Error(c.Request().Context(), "get dictionaries cache failed", "operation", op, "error", err)
 	}
@@ -174,7 +176,7 @@ func (a *Apis) GetAllDictionaries(c echo.Context) error {
 	if err := a.rds.SetDictionaries(ctx, data); err != nil {
 		log.Error(ctx, "set dictionaries cache failed", "operation", op, "error", err)
 	}
-	return c.JSON(http.StatusOK, data)
+	return c.JSON(http.StatusOK, domain.DictionariesFromRpc(data))
 }
 
 // DeleteProductColorPhotos godoc
@@ -281,4 +283,15 @@ func (a *Apis) productColorPhotoFiles(ctx context.Context, productID string) ([]
 		files = append(files, pcp.GetPhotos()...)
 	}
 	return files, nil
+}
+
+func dictionaryByCategoryView(d *model.DictionariesByCategory) *domain.Dictionaries {
+	if d == nil {
+		return nil
+	}
+	return domain.DictionariesFromRpc(&productsRPC.Dictionaries{
+		Brands: d.Brands, Categories: d.Categories, Countries: d.Countries, Materials: d.Materials, Colors: d.Colors,
+		MinPrice: d.MinPrice, MaxPrice: d.MaxPrice, MinWidth: d.MinWidth, MaxWidth: d.MaxWidth,
+		MinHeight: d.MinHeight, MaxHeight: d.MaxHeight, MinDepth: d.MinDepth, MaxDepth: d.MaxDepth,
+	})
 }

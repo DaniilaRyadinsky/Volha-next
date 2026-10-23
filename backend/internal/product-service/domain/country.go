@@ -5,7 +5,7 @@ import productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 type Country struct {
 	Id       string `json:"id"`
 	Title    string `json:"title"`
-	Friendly string `json:"friendly"`
+	Friendly string `json:"-"`
 }
 
 func CountryFromRpc(c *productsRPC.Country) *Country {

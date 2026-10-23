@@ -31,6 +31,7 @@ var allowedMIMEs = map[string]string{
 
 const (
 	ImagesDir      = "./images"
+	PDFsDir        = "./pdfs"
 	MaxUploadBytes = 10 << 20 // 10 MB
 	FileCleanupTTL = 2 * time.Second
 )
@@ -48,9 +49,12 @@ const (
 // @Router /api/files [post]
 func (a *Apis) UploadFile(c echo.Context) error {
 	const op = "handlers.UploadFile"
-	fileHeader, err := c.FormFile("img")
+	fileHeader, err := c.FormFile("file")
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, view.ErrorResponse{Error: "file field 'img' is required"})
+		fileHeader, err = c.FormFile("img")
+	}
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, view.ErrorResponse{Error: "file field 'file' or 'img' is required"})
 	}
 
 	src, err := fileHeader.Open()
@@ -73,12 +77,16 @@ func (a *Apis) UploadFile(c echo.Context) error {
 
 	detected := http.DetectContentType(buff[:n])
 	ext, ok := allowedMIMEs[detected]
+	if detected == "application/pdf" {
+		ext = ".pdf"
+		ok = true
+	}
 	if !ok {
 		return c.JSON(http.StatusUnsupportedMediaType, view.ErrorResponse{Error: "unsupported file type"})
 	}
 
 	filename := uuid.NewString() + ext
-	dstPath, err := imageFilePath(filename)
+	dstPath, err := storedFilePath(filename)
 	if err != nil {
 		log.Error(c.Request().Context(), "resolve upload path failed", "operation", op, "filename", filename, "error", err)
 		return c.JSON(http.StatusInternalServerError, view.ErrorResponse{Error: "failed to save file"})
@@ -186,7 +194,7 @@ var ErrReferencedFileNotFound = errors.New("referenced file does not exist")
 var ErrImageStorage = errors.New("image storage error")
 
 func deleteFile(filename string) error {
-	fullPath, err := imageFilePath(filename)
+	fullPath, err := storedFilePath(filename)
 	if err != nil {
 		return err
 	}
@@ -234,7 +242,7 @@ func validateImageFilename(filename string) error {
 	if filename == "" || filename == "." || filename == ".." {
 		return ErrFileName
 	}
-	if filepath.Clean(filename) != filename || filepath.IsAbs(filename) || strings.ContainsAny(filename, `/\`) || filepath.Base(filename) != filename {
+	if filepath.Clean(filename) != filename || filepath.IsAbs(filename) || strings.ContainsAny(filename, `/\:`) || filepath.Base(filename) != filename {
 		return ErrFileName
 	}
 	return nil
@@ -335,4 +343,48 @@ func (a *Apis) cleanupFileIfUnreferenced(ctx context.Context, op, filename strin
 
 func fileCleanupContext() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), FileCleanupTTL)
+}
+
+func storedFilePath(filename string) (string, error) {
+	if strings.HasSuffix(strings.ToLower(filename), ".pdf") {
+		return pdfFilePath(filename)
+	}
+	return imageFilePath(filename)
+}
+func pdfFilePath(filename string) (string, error) {
+	if err := validateImageFilename(filename); err != nil {
+		return "", err
+	}
+	if !strings.HasSuffix(filename, ".pdf") {
+		return "", ErrFileName
+	}
+	return filepath.Abs(filepath.Join(PDFsDir, filename))
+}
+func normalizePDFLink(link string) (string, error) {
+	name := strings.TrimPrefix(link, "/pdfs/")
+	if _, err := pdfFilePath(name); err != nil {
+		return "", err
+	}
+	return "/pdfs/" + name, nil
+}
+func ensurePDFReference(link string) error {
+	normalized, err := normalizePDFLink(link)
+	if err != nil {
+		return err
+	}
+	path, err := pdfFilePath(strings.TrimPrefix(normalized, "/pdfs/"))
+	if err != nil {
+		return err
+	}
+	info, err := os.Stat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return ErrReferencedFileNotFound
+	}
+	if err != nil {
+		return fmt.Errorf("%w: %v", ErrImageStorage, err)
+	}
+	if info.IsDir() {
+		return ErrReferencedFileNotFound
+	}
+	return nil
 }

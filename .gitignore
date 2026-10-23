@@ -19,5 +19,10 @@ qodana.yaml
 *.exe
 *.out
 coverage/
+/ci-reports/
+/.ci-cache/
+/.pnpm-store/
 tmp/
 /ops/images/
+/backend/images/
+/backend/pdfs/

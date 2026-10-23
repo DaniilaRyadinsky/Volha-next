@@ -14,9 +14,11 @@ type Database struct {
 	Driver *sql.DB
 }
 
-func Connect(cfg *config.Config) (*Database, error) {
+func Connect(cfg *config.Config) (*Database, error) { return connect(cfg, sql.Open) }
+
+func connect(cfg *config.Config, openDB func(string, string) (*sql.DB, error)) (*Database, error) {
 	const op = "auth.psql.Connect"
-	db, err := sql.Open("postgres", cfg.ConnStr)
+	db, err := openDB("postgres", cfg.ConnStr)
 	if err != nil {
 		return nil, format.Error(op, err)
 	}

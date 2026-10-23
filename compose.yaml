@@ -16,6 +16,7 @@ services:
     volumes:
       - ./backend/configs:/app/configs:ro
       - volha-images:/app/images
+      - volha-pdfs:/app/pdfs
     env_file:
       - path: ./.env
         required: false
@@ -239,6 +240,7 @@ services:
 volumes:
   postgres-data-v18:
   volha-images:
+  volha-pdfs:
 
 networks:
   volha-internal:

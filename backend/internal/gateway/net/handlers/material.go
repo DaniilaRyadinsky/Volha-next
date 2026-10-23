@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/autumnterror/volha-backend/internal/product-service/domain"
+
 	productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 	"github.com/autumnterror/volha-backend/internal/gateway/net/view"
 	"github.com/labstack/echo/v4"
@@ -104,7 +106,7 @@ func (a *Apis) DeleteMaterial(c echo.Context) error {
 // @Description Возвращает список всех материалов
 // @Tags material
 // @Produce json
-// @Success 200 {object} []productsRPC.Material "успех"
+// @Success 200 {object} []domain.Material "успех"
 // @Failure 502 {object} view.ErrorResponse "ошибка в микросервисе"
 // @Router /api/material/all [get]
 func (a *Apis) GetAllMaterials(c echo.Context) error {
@@ -119,9 +121,9 @@ func (a *Apis) GetAllMaterials(c echo.Context) error {
 		return c.JSON(code, swg)
 	}
 	if len(list.GetItems()) == 0 {
-		return c.JSON(http.StatusOK, []*productsRPC.Material{})
+		return c.JSON(http.StatusOK, []*domain.Material{})
 	}
-	return c.JSON(http.StatusOK, list.GetItems())
+	return c.JSON(http.StatusOK, domain.MaterialsFromRpc(list.GetItems()))
 }
 
 // GetMaterial rand godoc
@@ -130,7 +132,7 @@ func (a *Apis) GetAllMaterials(c echo.Context) error {
 // @Tags material
 // @Produce json
 // @Param id query string true "ID материал"
-// @Success 200 {object} productsRPC.Material "успех"
+// @Success 200 {object} domain.Material "успех"
 // @Failure 502 {object} view.ErrorResponse "ошибка в микросервисе"
 // @Router /api/material [get]
 func (a *Apis) GetMaterial(c echo.Context) error {
@@ -148,5 +150,5 @@ func (a *Apis) GetMaterial(c echo.Context) error {
 		code, swg := a.mapGRPCError(ctx, op, err)
 		return c.JSON(code, swg)
 	}
-	return c.JSON(http.StatusOK, material)
+	return c.JSON(http.StatusOK, domain.MaterialFromRpc(material))
 }

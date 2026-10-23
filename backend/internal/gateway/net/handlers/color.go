@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/autumnterror/volha-backend/internal/product-service/domain"
+
 	productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 	"github.com/autumnterror/volha-backend/internal/gateway/net/view"
 	"github.com/labstack/echo/v4"
@@ -104,7 +106,7 @@ func (a *Apis) DeleteColor(c echo.Context) error {
 // @Description Возвращает список всех доступных цветов
 // @Tags color
 // @Produce json
-// @Success 200 {object} []productsRPC.Color "успех"
+// @Success 200 {object} []domain.Color "успех"
 // @Failure 502 {object} view.ErrorResponse "ошибка в микросервисе"
 // @Router /api/color/all [get]
 func (a *Apis) GetAllColors(c echo.Context) error {
@@ -119,9 +121,9 @@ func (a *Apis) GetAllColors(c echo.Context) error {
 		return c.JSON(code, swg)
 	}
 	if len(list.GetItems()) == 0 {
-		return c.JSON(http.StatusOK, []*productsRPC.Color{})
+		return c.JSON(http.StatusOK, []*domain.Color{})
 	}
-	return c.JSON(http.StatusOK, list.GetItems())
+	return c.JSON(http.StatusOK, domain.ColorsFromRpc(list.GetItems()))
 }
 
 // GetColor godoc
@@ -130,7 +132,7 @@ func (a *Apis) GetAllColors(c echo.Context) error {
 // @Tags color
 // @Produce json
 // @Param id query string true "ID цвета"
-// @Success 200 {object} productsRPC.Color "успех"
+// @Success 200 {object} domain.Color "успех"
 // @Failure 502 {object} view.ErrorResponse "ошибка в микросервисе"
 // @Router /api/color [get]
 func (a *Apis) GetColor(c echo.Context) error {
@@ -148,5 +150,5 @@ func (a *Apis) GetColor(c echo.Context) error {
 		code, swg := a.mapGRPCError(ctx, op, err)
 		return c.JSON(code, swg)
 	}
-	return c.JSON(http.StatusOK, color)
+	return c.JSON(http.StatusOK, domain.ColorFromRpc(color))
 }

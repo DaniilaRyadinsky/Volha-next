@@ -8,6 +8,12 @@ import "google/protobuf/empty.proto";
 import "domain.proto";
 
 service Products {
+  rpc CreateArticle(Article) returns (google.protobuf.Empty);
+  rpc UpdateArticle(Article) returns (google.protobuf.Empty);
+  rpc DeleteArticle(Id) returns (google.protobuf.Empty);
+  rpc GetArticle(Id) returns (Article);
+  rpc GetAllArticles(Pagination) returns (ArticleList);
+
   rpc GetDictionaries(Id) returns (Dictionaries);
 
   // Products

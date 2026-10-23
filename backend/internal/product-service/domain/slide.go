@@ -9,7 +9,7 @@ type Slide struct {
 	Img762      string `json:"img762"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	Badge       string `json:"badge"`
+	Badge       string `json:"subtitle"`
 }
 
 func SlideFromRpc(s *productsRPC.Slide) *Slide {

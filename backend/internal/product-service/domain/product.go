@@ -6,7 +6,7 @@ type Product struct {
 	Id          string      `json:"id"`
 	Title       string      `json:"title"`
 	Slug        string      `json:"slug"`
-	Article     string      `json:"article"`
+	Article     string      `json:"sku"`
 	Brand       *Brand      `json:"brand"`
 	Category    *Category   `json:"category"`
 	Country     *Country    `json:"country"`
@@ -15,19 +15,19 @@ type Product struct {
 	Depth       int32       `json:"depth"`
 	Materials   []*Material `json:"materials"`
 	Colors      []*Color    `json:"colors"`
-	Photos      []string    `json:"photos"`
-	Seems       []*Product  `json:"seems"`
+	Photos      []string    `json:"-"`
+	Seems       []*Product  `json:"similarProducts"`
 	Price       int32       `json:"price"`
 	Description string      `json:"description"`
-	IsFeatured  bool        `json:"isFeatured"`
-	PriceSale   int32       `json:"pricesale"`
+	IsFeatured  bool        `json:"-"`
+	PriceSale   int32       `json:"-"`
 }
 
 type ProductId struct {
 	Id          string   `json:"id"`
 	Title       string   `json:"title"`
 	Slug        string   `json:"slug"`
-	Article     string   `json:"article"`
+	Article     string   `json:"sku"`
 	Brand       string   `json:"brand"`
 	Category    string   `json:"category"`
 	Country     string   `json:"country"`
@@ -37,7 +37,7 @@ type ProductId struct {
 	Materials   []string `json:"materials"`
 	Colors      []string `json:"colors"`
 	Photos      []string `json:"photos"`
-	Seems       []string `json:"seems"`
+	Seems       []string `json:"similarProducts"`
 	Price       int32    `json:"price"`
 	Description string   `json:"description"`
 	IsFeatured  bool     `json:"isFeatured"`
@@ -45,14 +45,16 @@ type ProductId struct {
 }
 
 type ProductCatalogItem struct {
-	Id         string `json:"id"`
-	Slug       string `json:"slug"`
-	Category   string `json:"category"`
-	Title      string `json:"title"`
-	Price      int32  `json:"price"`
-	Image      string `json:"image"`
-	PriceSale  int32  `json:"pricesale"`
-	IsFeatured bool   `json:"isFeatured"`
+	CategoryDetails *Category `json:"-"`
+	Photos          []string  `json:"photos"`
+	Id              string    `json:"id"`
+	Slug            string    `json:"slug"`
+	Category        string    `json:"category"`
+	Title           string    `json:"title"`
+	Price           int32     `json:"price"`
+	Image           string    `json:"image"`
+	PriceSale       int32     `json:"pricesale"`
+	IsFeatured      bool      `json:"isFeatured"`
 }
 
 func ProductCatalogItemsToRpc(items []*ProductCatalogItem) []*productsRPC.ProductCatalogItem {
@@ -62,14 +64,16 @@ func ProductCatalogItemsToRpc(items []*ProductCatalogItem) []*productsRPC.Produc
 			continue
 		}
 		res = append(res, &productsRPC.ProductCatalogItem{
-			Id:         item.Id,
-			Slug:       item.Slug,
-			Category:   item.Category,
-			Title:      item.Title,
-			Price:      item.Price,
-			Image:      item.Image,
-			Pricesale:  item.PriceSale,
-			IsFeatured: item.IsFeatured,
+			Id:              item.Id,
+			Slug:            item.Slug,
+			Category:        item.Category,
+			CategoryDetails: CategoryToRpc(item.CategoryDetails),
+			Photos:          append([]string{}, item.Photos...),
+			Title:           item.Title,
+			Price:           item.Price,
+			Image:           item.Image,
+			Pricesale:       item.PriceSale,
+			IsFeatured:      item.IsFeatured,
 		})
 	}
 	return res
@@ -111,22 +115,24 @@ func NewEmptyProduct() Product {
 }
 
 type ProductFilter struct {
+	Search    string   `json:"search,omitempty"`
+	Page      int32    `json:"page"`
 	Brand     []string `json:"brand"`
 	Country   []string `json:"country"`
 	Category  []string `json:"category"`
-	MinWidth  int32    `json:"min_width"`
-	MaxWidth  int32    `json:"max_width"`
-	MinHeight int32    `json:"min_height"`
-	MaxHeight int32    `json:"max_height"`
-	MinDepth  int32    `json:"min_depth"`
-	MaxDepth  int32    `json:"max_depth"`
+	MinWidth  int32    `json:"minWidth"`
+	MaxWidth  int32    `json:"maxWidth"`
+	MinHeight int32    `json:"minHeight"`
+	MaxHeight int32    `json:"maxHeight"`
+	MinDepth  int32    `json:"minDepth"`
+	MaxDepth  int32    `json:"maxDepth"`
 	Materials []string `json:"materials"`
 	Colors    []string `json:"colors"`
-	MinPrice  int32    `json:"min_price"`
-	MaxPrice  int32    `json:"max_price"`
-	SortBy    string   `json:"sort_by"`
-	SortOrder string   `json:"sort_order"`
-	Offset    int32    `json:"offset"`
+	MinPrice  int32    `json:"minPrice"`
+	MaxPrice  int32    `json:"maxPrice"`
+	SortBy    string   `json:"sortBy"`
+	SortOrder string   `json:"sortOrder"`
+	Offset    int32    `json:"-"`
 	Limit     int32    `json:"limit"`
 	Title     string   `json:"title"`
 }

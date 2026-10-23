@@ -67,6 +67,7 @@ func New(rds *redis.Client, a *products.Client, authClient *authgrpc.Client, cfg
 		AllowCredentials: true,
 	}))
 	e.Static("/images", ImagesDir)
+	e.Static("/pdfs", handlers.PDFsDir)
 
 	authAPI := e.Group("/api/auth")
 	authAPI.POST("/register", h.Register)
@@ -87,6 +88,9 @@ func New(rds *redis.Client, a *products.Client, authClient *authgrpc.Client, cfg
 
 	userApi := e.Group("/api", mw.CheckId())
 	{
+		article := userApi.Group("/article")
+		article.GET("/all", h.GetAllArticles)
+		article.GET("", h.GetArticle)
 		p := userApi.Group("/product")
 		{
 			p.POST("/filter", h.FilterProducts)
@@ -145,6 +149,10 @@ func New(rds *redis.Client, a *products.Client, authClient *authgrpc.Client, cfg
 
 	adminApi := e.Group("/api", mw.CheckId(), mw.DevAdminAuth(cfg))
 	{
+		article := adminApi.Group("/article")
+		article.POST("", h.CreateArticle)
+		article.PUT("", h.UpdateArticle)
+		article.DELETE("", h.DeleteArticle)
 		f := adminApi.Group("/files")
 		{
 			f.POST("", h.UploadFile)

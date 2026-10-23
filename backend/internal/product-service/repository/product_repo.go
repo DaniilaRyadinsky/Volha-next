@@ -285,6 +285,7 @@ func scanProductCatalogList(op string, rows *sql.Rows) ([]*domain.ProductCatalog
 	items := make([]*domain.ProductCatalogItem, 0)
 	for rows.Next() {
 		var item domain.ProductCatalogItem
+		item.CategoryDetails = &domain.Category{}
 		if err := rows.Scan(
 			&item.Id,
 			&item.Slug,
@@ -294,6 +295,9 @@ func scanProductCatalogList(op string, rows *sql.Rows) ([]*domain.ProductCatalog
 			&item.Image,
 			&item.PriceSale,
 			&item.IsFeatured,
+			&item.CategoryDetails.Id, &item.CategoryDetails.Slug, &item.CategoryDetails.Title,
+			&item.CategoryDetails.Description, &item.CategoryDetails.Count, &item.CategoryDetails.Img,
+			pq.Array(&item.Photos),
 		); err != nil {
 			return nil, format.Error(op, err)
 		}
@@ -368,8 +372,33 @@ func decodeProductJSON(p *domain.Product, fields productJSONFields) error {
 	if err := json.Unmarshal(fields.colors, &p.Colors); err != nil {
 		return err
 	}
-	if err := json.Unmarshal(fields.similar, &p.Seems); err != nil {
+	// The SQL projection has its own schema; public JSON tags must not change
+	// how stored article/photos/discount fields are decoded.
+	var similar []struct {
+		ID          string   `json:"id"`
+		Title       string   `json:"title"`
+		Article     string   `json:"article"`
+		Slug        string   `json:"slug"`
+		Width       int32    `json:"width"`
+		Height      int32    `json:"height"`
+		Depth       int32    `json:"depth"`
+		Photos      []string `json:"photos"`
+		Price       int32    `json:"price"`
+		Description string   `json:"description"`
+		IsFeatured  bool     `json:"isFeatured"`
+		PriceSale   int32    `json:"pricesale"`
+	}
+	if err := json.Unmarshal(fields.similar, &similar); err != nil {
 		return err
+	}
+	p.Seems = make([]*domain.Product, 0, len(similar))
+	for _, item := range similar {
+		p.Seems = append(p.Seems, &domain.Product{
+			Id: item.ID, Title: item.Title, Article: item.Article, Slug: item.Slug,
+			Width: item.Width, Height: item.Height, Depth: item.Depth,
+			Photos: item.Photos, Price: item.Price, Description: item.Description,
+			IsFeatured: item.IsFeatured, PriceSale: item.PriceSale,
+		})
 	}
 	return nil
 }

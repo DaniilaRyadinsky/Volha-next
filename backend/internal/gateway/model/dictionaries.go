@@ -9,14 +9,14 @@ type DictionariesByCategory struct {
 	Materials  []*productsRPC.Material `json:"materials"`
 	Colors     []*productsRPC.Color    `json:"colors"`
 
-	MinPrice  int32 `json:"min_price"`
-	MaxPrice  int32 `json:"max_price"`
-	MinWidth  int32 `json:"min_width"`
-	MaxWidth  int32 `json:"max_width"`
-	MinHeight int32 `json:"min_height"`
-	MaxHeight int32 `json:"max_height"`
-	MinDepth  int32 `json:"min_depth"`
-	MaxDepth  int32 `json:"max_depth"`
+	MinPrice  int32 `json:"minPrice"`
+	MaxPrice  int32 `json:"maxPrice"`
+	MinWidth  int32 `json:"minWidth"`
+	MaxWidth  int32 `json:"maxWidth"`
+	MinHeight int32 `json:"minHeight"`
+	MaxHeight int32 `json:"maxHeight"`
+	MinDepth  int32 `json:"minDepth"`
+	MaxDepth  int32 `json:"maxDepth"`
 
 	FilteredCategory string `json:"filtered_category"`
 }

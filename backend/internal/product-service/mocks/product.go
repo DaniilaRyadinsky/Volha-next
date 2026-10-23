@@ -14,6 +14,7 @@ func (TxRunner) RunInTx(ctx context.Context, fn func(ctx context.Context) error)
 }
 
 type Provider struct {
+	ArticleRepo repository.ArticleRepo
 	ProductRepo repository.ProductRepo
 	CatalogRepo repository.CatalogRepo
 	DictRepo    repository.DictRepo
@@ -73,3 +74,5 @@ func (r ProductRepo) DeleteProduct(ctx context.Context, id string) error {
 func (r ProductRepo) FilterProducts(ctx context.Context, filter *domain.ProductFilter) ([]*domain.ProductCatalogItem, int, error) {
 	return r.FilterProductsFn(ctx, filter)
 }
+
+func (p Provider) Article(context.Context) repository.ArticleRepo { return p.ArticleRepo }

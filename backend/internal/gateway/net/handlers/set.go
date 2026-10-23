@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	"math"
 	"net/http"
 	"strconv"
 
@@ -9,34 +11,46 @@ import (
 )
 
 const notByCategory = "CLR"
-
 const successPag = 0
 const maxPaginationLimit = 100
 
+func pageOffset(page, limit int) (int, int, int, error) {
+	if page == 0 {
+		page = 1
+	}
+	if limit == 0 {
+		limit = 20
+	}
+	if page < 1 || limit < 1 || limit > maxPaginationLimit || page-1 > math.MaxInt32/limit {
+		return 0, 0, 0, errors.New("invalid page or limit")
+	}
+	return (page - 1) * limit, limit, page, nil
+}
 func pag(c echo.Context) (int, int, int, *view.ErrorResponse) {
-	s := c.QueryParam("offset")
-	if s == "" {
-		return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: "bad offset"}
+	page, limit := 0, 0
+	var err error
+	if value := c.QueryParam("page"); value != "" {
+		page, err = strconv.Atoi(value)
+		if err != nil {
+			return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: "page must be int"}
+		}
 	}
-	lim := c.QueryParam("limit")
-	if lim == "" {
-		return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: "bad limit"}
+	if value := c.QueryParam("limit"); value != "" {
+		limit, err = strconv.Atoi(value)
+		if err != nil {
+			return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: "limit must be int"}
+		}
 	}
-
-	offset, err := strconv.Atoi(s)
+	offset, limit, _, err := pageOffset(page, limit)
 	if err != nil {
-		return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: "offset must be int"}
+		return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: err.Error()}
 	}
-	limit, err := strconv.Atoi(lim)
-	if err != nil {
-		return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: "limit must be int"}
-	}
-
-	if offset < 0 || limit <= 0 {
-		return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: "bad pagination"}
-	}
-	if limit > maxPaginationLimit {
-		return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: "limit is too large"}
+	// Accept existing offset callers while page is the public pagination contract.
+	if value := c.QueryParam("offset"); value != "" && c.QueryParam("page") == "" {
+		offset, err = strconv.Atoi(value)
+		if err != nil || offset < 0 || offset > math.MaxInt32 {
+			return 0, 0, http.StatusBadRequest, &view.ErrorResponse{Error: "bad offset"}
+		}
 	}
 	return offset, limit, successPag, nil
 }

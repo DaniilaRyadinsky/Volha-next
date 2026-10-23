@@ -3,6 +3,7 @@ package psqltx
 import (
 	"context"
 	"database/sql"
+
 	"github.com/autumnterror/volha-backend/internal/product-service/repository"
 )
 
@@ -43,6 +44,13 @@ func (p *RepoProvider) Pcp(ctx context.Context) repository.ProductColorPhotosRep
 }
 
 func (p *RepoProvider) FileRefs(ctx context.Context) repository.FileReferenceRepo {
+	if tx, ok := TxFromContext(ctx); ok {
+		return repository.Driver{Driver: tx}
+	}
+	return repository.Driver{Driver: p.db}
+}
+
+func (p *RepoProvider) Article(ctx context.Context) repository.ArticleRepo {
 	if tx, ok := TxFromContext(ctx); ok {
 		return repository.Driver{Driver: tx}
 	}

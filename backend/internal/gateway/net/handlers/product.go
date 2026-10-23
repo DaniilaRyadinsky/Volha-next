@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/autumnterror/volha-backend/internal/product-service/domain"
+
 	productsRPC "github.com/autumnterror/volha-backend/api/proto/gen"
 	"github.com/autumnterror/volha-backend/internal/gateway/net/view"
 	"github.com/labstack/echo/v4"
@@ -15,7 +17,7 @@ import (
 // @Tags product
 // @Accept json
 // @Produce json
-// @Param product body productsRPC.ProductId true "Новый продукт"
+// @Param product body domain.ProductId true "Новый продукт"
 // @Success 200 {object} view.IDResponse "успех"
 // @Failure 400 {object} view.ErrorResponse "неправильный ввод"
 // @Failure 409 {object} view.ErrorResponse "уже существует"
@@ -27,10 +29,12 @@ func (a *Apis) CreateProduct(c echo.Context) error {
 	ctx, cancel := requestContext(c)
 	defer cancel()
 
+	var body domain.ProductId
 	var p productsRPC.ProductId
-	if err := c.Bind(&p); err != nil {
+	if err := c.Bind(&body); err != nil {
 		return c.JSON(http.StatusBadRequest, view.ErrorResponse{Error: "bad JSON"})
 	}
+	p = *domain.ProductIdToRpc(&body)
 	p.Id = xid.New().String()
 	if err := ensureImageReferences(p.GetPhotos()...); err != nil {
 		code, swg := imageReferenceErrorResponse(ctx, op, err)
@@ -50,7 +54,7 @@ func (a *Apis) CreateProduct(c echo.Context) error {
 // @Tags product
 // @Accept json
 // @Produce json
-// @Param product body productsRPC.ProductId true "Обновлённые данные продукта"
+// @Param product body domain.ProductId true "Обновлённые данные продукта"
 // @Success 200 {object} view.MessageResponse "успех"
 // @Failure 400 {object} view.ErrorResponse "неправильный ввод"
 // @Failure 404 {object} view.ErrorResponse "не найдено"
@@ -62,10 +66,12 @@ func (a *Apis) UpdateProduct(c echo.Context) error {
 	ctx, cancel := requestContext(c)
 	defer cancel()
 
+	var body domain.ProductId
 	var p productsRPC.ProductId
-	if err := c.Bind(&p); err != nil {
+	if err := c.Bind(&body); err != nil {
 		return c.JSON(http.StatusBadRequest, view.ErrorResponse{Error: "bad JSON"})
 	}
+	p = *domain.ProductIdToRpc(&body)
 	if err := ensureImageReferences(p.GetPhotos()...); err != nil {
 		code, swg := imageReferenceErrorResponse(ctx, op, err)
 		return c.JSON(code, swg)
@@ -102,7 +108,7 @@ func (a *Apis) UpdateProduct(c echo.Context) error {
 // @Tags product
 // @Produce json
 // @Param id query string true "ID продукт"
-// @Success 200 {object} productsRPC.Product "успех"
+// @Success 200 {object} domain.Product "успех"
 // @Failure 502 {object} view.ErrorResponse "ошибка в микросервисе"
 // @Router /api/product [get]
 func (a *Apis) GetProduct(c echo.Context) error {
@@ -120,7 +126,7 @@ func (a *Apis) GetProduct(c echo.Context) error {
 		code, swg := a.mapGRPCError(ctx, op, err)
 		return c.JSON(code, swg)
 	}
-	return c.JSON(http.StatusOK, product)
+	return c.JSON(http.StatusOK, domain.ProductFromRpc(product))
 }
 
 // FilterProducts godoc
@@ -129,50 +135,40 @@ func (a *Apis) GetProduct(c echo.Context) error {
 // @Tags product
 // @Accept json
 // @Produce json
-// @Param filter body productsRPC.ProductFilter true "Параметры фильтрации"
+// @Param filter body domain.ProductFilter true "Параметры фильтрации"
 // @Success 200 {object} view.ProductCatalogList "Успешный запрос"
 // @Failure 400 {object} view.ErrorResponse "Неверный формат запроса"
 // @Failure 502 {object} view.ErrorResponse "Ошибка взаимодействия с сервисом"
 // @Router /api/product/filter [post]
 func (a *Apis) FilterProducts(c echo.Context) error {
 	const op = "handlers.FilterProducts"
-
-	var f productsRPC.ProductFilter
+	var f domain.ProductFilter
 	if err := c.Bind(&f); err != nil {
 		return c.JSON(http.StatusBadRequest, view.ErrorResponse{Error: "bad JSON"})
 	}
-
+	offset, limit, page, err := pageOffset(int(f.Page), int(f.Limit))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, view.ErrorResponse{Error: err.Error()})
+	}
+	f.Offset = int32(offset)
+	f.Limit = int32(limit)
+	if f.Search != "" {
+		f.Title = f.Search
+	}
 	ctx, cancel := requestContext(c)
 	defer cancel()
-
-	list, err := a.apiProduct.API.FilterProducts(ctx, &f)
+	list, err := a.apiProduct.API.FilterProducts(ctx, domain.ProductFilterToRpc(&f))
 	if err != nil {
-		code, swg := a.mapGRPCError(ctx, op, err)
-		return c.JSON(code, swg)
+		code, body := a.mapGRPCError(ctx, op, err)
+		return c.JSON(code, body)
 	}
-
 	items := make([]view.ProductCatalogItem, 0, len(list.GetItems()))
 	for _, item := range list.GetItems() {
-		if item == nil {
-			continue
+		if item != nil {
+			items = append(items, view.CatalogItemFromRPC(item))
 		}
-		items = append(items, view.ProductCatalogItem{
-			ID:         item.GetId(),
-			Slug:       item.GetSlug(),
-			Category:   item.GetCategory(),
-			Title:      item.GetTitle(),
-			Price:      item.GetPrice(),
-			Image:      item.GetImage(),
-			PriceSale:  item.GetPricesale(),
-			IsFeatured: item.GetIsFeatured(),
-		})
 	}
-	return c.JSON(http.StatusOK, view.ProductCatalogList{
-		Items:  items,
-		Total:  list.GetTotal(),
-		Offset: list.GetOffset(),
-		Limit:  list.GetLimit(),
-	})
+	return c.JSON(http.StatusOK, view.ProductCatalogList{Items: items, Total: list.GetTotal(), Page: int32(page), Limit: int32(limit)})
 }
 
 // GetAllProducts godoc
@@ -180,9 +176,9 @@ func (a *Apis) FilterProducts(c echo.Context) error {
 // @Description Возвращает список всех продуктов
 // @Tags product
 // @Produce json
-// @Param offset query int true  "offset >= 0"
+// @Param page query int false "Page starting at 1"
 // @Param limit query int true  "limit > 0"
-// @Success 200 {object} []productsRPC.Product
+// @Success 200 {object} view.ProductCatalogList
 // @Failure 400 {object} view.ErrorResponse
 // @Failure 502 {object} view.ErrorResponse "Ошибка взаимодействия с сервисом"
 // @Router /api/product/all [get]
@@ -206,11 +202,11 @@ func (a *Apis) GetAllProducts(c echo.Context) error {
 		return c.JSON(code, swg)
 	}
 
-	items := list.GetItems()
-	if len(items) == 0 {
-		list.Items = []*productsRPC.Product{}
-		return c.JSON(http.StatusOK, list)
+	items := make([]view.ProductCatalogItem, 0, len(list.GetItems()))
+	for _, item := range list.GetItems() {
+		if item != nil {
+			items = append(items, view.CatalogItemFromProduct(item))
+		}
 	}
-
-	return c.JSON(http.StatusOK, list)
+	return c.JSON(http.StatusOK, view.ProductCatalogList{Items: items, Total: list.GetTotal(), Page: int32(offset/limit + 1), Limit: int32(limit)})
 }

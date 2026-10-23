@@ -105,6 +105,10 @@ func loadConfig() (dumperConfig, error) {
 }
 
 func dump(ctx context.Context, cfg dumperConfig, dir string) error {
+	return dumpWithRunner(ctx, cfg, dir, func(cmd *exec.Cmd) error { return cmd.Run() })
+}
+
+func dumpWithRunner(ctx context.Context, cfg dumperConfig, dir string, run func(*exec.Cmd) error) error {
 	start := time.Now()
 	ts := start.UTC().Format("20060102_150405")
 	filename := filepath.Join(dir, fmt.Sprintf("dump.%s.sql", ts))
@@ -131,7 +135,8 @@ func dump(ctx context.Context, cfg dumperConfig, dir string) error {
 	cmd.Stderr = &stderr
 	cmd.Env = append(os.Environ(), "PGPASSWORD="+cfg.password)
 
-	if err := cmd.Run(); err != nil {
+	if err := run(cmd); err != nil {
+		_ = f.Close()
 		_ = os.Remove(tmpFilename)
 		return fmt.Errorf("pg_dump failed: %w: %s", err, stderr.String())
 	}

@@ -20,6 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	Products_CreateArticle_FullMethodName                  = "/products.Products/CreateArticle"
+	Products_UpdateArticle_FullMethodName                  = "/products.Products/UpdateArticle"
+	Products_DeleteArticle_FullMethodName                  = "/products.Products/DeleteArticle"
+	Products_GetArticle_FullMethodName                     = "/products.Products/GetArticle"
+	Products_GetAllArticles_FullMethodName                 = "/products.Products/GetAllArticles"
 	Products_GetDictionaries_FullMethodName                = "/products.Products/GetDictionaries"
 	Products_CreateProduct_FullMethodName                  = "/products.Products/CreateProduct"
 	Products_UpdateProduct_FullMethodName                  = "/products.Products/UpdateProduct"
@@ -70,6 +75,11 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductsClient interface {
+	CreateArticle(ctx context.Context, in *Article, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdateArticle(ctx context.Context, in *Article, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteArticle(ctx context.Context, in *Id, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetArticle(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Article, error)
+	GetAllArticles(ctx context.Context, in *Pagination, opts ...grpc.CallOption) (*ArticleList, error)
 	GetDictionaries(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Dictionaries, error)
 	// Products
 	CreateProduct(ctx context.Context, in *ProductId, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -130,6 +140,56 @@ type productsClient struct {
 
 func NewProductsClient(cc grpc.ClientConnInterface) ProductsClient {
 	return &productsClient{cc}
+}
+
+func (c *productsClient) CreateArticle(ctx context.Context, in *Article, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Products_CreateArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productsClient) UpdateArticle(ctx context.Context, in *Article, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Products_UpdateArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productsClient) DeleteArticle(ctx context.Context, in *Id, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Products_DeleteArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productsClient) GetArticle(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Article, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Article)
+	err := c.cc.Invoke(ctx, Products_GetArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productsClient) GetAllArticles(ctx context.Context, in *Pagination, opts ...grpc.CallOption) (*ArticleList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ArticleList)
+	err := c.cc.Invoke(ctx, Products_GetAllArticles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *productsClient) GetDictionaries(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Dictionaries, error) {
@@ -576,6 +636,11 @@ func (c *productsClient) IsFileReferenced(ctx context.Context, in *FileReference
 // All implementations must embed UnimplementedProductsServer
 // for forward compatibility.
 type ProductsServer interface {
+	CreateArticle(context.Context, *Article) (*emptypb.Empty, error)
+	UpdateArticle(context.Context, *Article) (*emptypb.Empty, error)
+	DeleteArticle(context.Context, *Id) (*emptypb.Empty, error)
+	GetArticle(context.Context, *Id) (*Article, error)
+	GetAllArticles(context.Context, *Pagination) (*ArticleList, error)
 	GetDictionaries(context.Context, *Id) (*Dictionaries, error)
 	// Products
 	CreateProduct(context.Context, *ProductId) (*emptypb.Empty, error)
@@ -638,6 +703,21 @@ type ProductsServer interface {
 // pointer dereference when methods are called.
 type UnimplementedProductsServer struct{}
 
+func (UnimplementedProductsServer) CreateArticle(context.Context, *Article) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateArticle not implemented")
+}
+func (UnimplementedProductsServer) UpdateArticle(context.Context, *Article) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateArticle not implemented")
+}
+func (UnimplementedProductsServer) DeleteArticle(context.Context, *Id) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticle not implemented")
+}
+func (UnimplementedProductsServer) GetArticle(context.Context, *Id) (*Article, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
+}
+func (UnimplementedProductsServer) GetAllArticles(context.Context, *Pagination) (*ArticleList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllArticles not implemented")
+}
 func (UnimplementedProductsServer) GetDictionaries(context.Context, *Id) (*Dictionaries, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDictionaries not implemented")
 }
@@ -789,6 +869,96 @@ func RegisterProductsServer(s grpc.ServiceRegistrar, srv ProductsServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&Products_ServiceDesc, srv)
+}
+
+func _Products_CreateArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Article)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductsServer).CreateArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Products_CreateArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductsServer).CreateArticle(ctx, req.(*Article))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Products_UpdateArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Article)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductsServer).UpdateArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Products_UpdateArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductsServer).UpdateArticle(ctx, req.(*Article))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Products_DeleteArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Id)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductsServer).DeleteArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Products_DeleteArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductsServer).DeleteArticle(ctx, req.(*Id))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Products_GetArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Id)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductsServer).GetArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Products_GetArticle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductsServer).GetArticle(ctx, req.(*Id))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Products_GetAllArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Pagination)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductsServer).GetAllArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Products_GetAllArticles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductsServer).GetAllArticles(ctx, req.(*Pagination))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Products_GetDictionaries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1590,6 +1760,26 @@ var Products_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "products.Products",
 	HandlerType: (*ProductsServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateArticle",
+			Handler:    _Products_CreateArticle_Handler,
+		},
+		{
+			MethodName: "UpdateArticle",
+			Handler:    _Products_UpdateArticle_Handler,
+		},
+		{
+			MethodName: "DeleteArticle",
+			Handler:    _Products_DeleteArticle_Handler,
+		},
+		{
+			MethodName: "GetArticle",
+			Handler:    _Products_GetArticle_Handler,
+		},
+		{
+			MethodName: "GetAllArticles",
+			Handler:    _Products_GetAllArticles_Handler,
+		},
 		{
 			MethodName: "GetDictionaries",
 			Handler:    _Products_GetDictionaries_Handler,
